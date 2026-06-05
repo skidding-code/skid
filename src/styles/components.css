@@ -233,6 +233,11 @@
 .course-hero__tag { margin: 6px 0 0; opacity: 0.92; max-width: 50ch; line-height: 1.4; }
 .course-hero__ring { margin-left: auto; }
 .ring__label { fill: #fff; font-weight: 800; font-size: 0.85rem; font-family: var(--font-rounded); }
+.course-hero__done {
+  margin-top: 16px; padding: 12px 16px; border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.18); color: #fff; font-weight: 700;
+  backdrop-filter: blur(4px);
+}
 
 .chapters { margin-top: 28px; display: flex; flex-direction: column; gap: 28px; }
 .chapter__head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }

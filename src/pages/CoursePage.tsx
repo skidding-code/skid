@@ -39,6 +39,9 @@ export function CoursePage() {
             />
           </div>
         </div>
+        {list.length > 0 && done === list.length && (
+          <div className="course-hero__done">🎉 Course complete — you finished every lesson. Incredible work!</div>
+        )}
       </div>
 
       <div className="chapters">
