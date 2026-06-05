@@ -115,11 +115,15 @@ export async function runRemote(track: Track, code: string, timeoutMs = 35_000):
     }
 
     // status is the program's exit code as a string ("0" == success).
-    const ok = (r.status ?? "1") === "0" && compileErr === "";
+    // Success = the program ran and exited 0. Compiler *warnings* (e.g. Rust's
+    // "unused variant") also land in compiler_error but don't fail the build, so
+    // they must not fail grading; a real compile error yields a non-zero status.
+    const ok = (r.status ?? "1") === "0";
     return {
       ok,
       stdout,
-      stderr: [compileErr, runErr].filter(Boolean).join("\n"),
+      // On success, surface only runtime stderr — not compiler warnings.
+      stderr: ok ? runErr : [compileErr, runErr].filter(Boolean).join("\n"),
       error: ok ? undefined : compileErr || runErr || `Exited with status ${r.status}`,
     };
   } catch (err) {

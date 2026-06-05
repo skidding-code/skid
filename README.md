@@ -9,7 +9,7 @@ streak, and unlock badges as you go.
 
 ## What it is
 
-- **Five languages — 99 lessons:**
+- **Five languages — 108 lessons:**
   - 🐍 **Python** (13 chapters, 39 lessons) — printing, variables, decisions,
     loops, lists, functions, strings, dictionaries, error handling, classes,
     modules & randomness, capstone mini-projects (FizzBuzz, times tables, a
@@ -18,8 +18,10 @@ streak, and unlock badges as you go.
     CSS styling, flexbox layout, JavaScript, forms, events, animations, capstone
     mini-apps (click counter, color changer, mood board), a full personal
     homepage, and responsive design.
-  - 🐦 **Swift**, ☕ **Java**, 🦀 **Rust** (3 chapters / 9 lessons each) —
-    basics, control flow & collections, and functions/methods/structs.
+  - 🐦 **Swift**, ☕ **Java**, 🦀 **Rust** (4 chapters / 12 lessons each) —
+    basics, control flow & collections, functions/methods/structs, plus a
+    signature chapter each (Rust `match` & `Option`, Java lists & maps, Swift
+    optionals & dictionaries).
 
 - **Learning is a game:** every lesson grants XP toward leveling up (with playful
   titles), a daily **streak** keeps you coming back, and **12 badges** unlock as
