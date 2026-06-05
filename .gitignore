@@ -11,3 +11,6 @@ public/pyodide
 
 # Internal scaffolding for content-authoring agents.
 AGENT_SPEC.md
+
+# TS incremental build info
+*.tsbuildinfo

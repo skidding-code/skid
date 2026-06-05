@@ -54,6 +54,9 @@ export function Preview({ files, runNonce, domRules, onConsole, onDomResults }: 
           onDomResults([]);
         }
       } else if (m.type === "pg-validate-result") {
+        // Ignore results from a superseded run (e.g. Run clicked twice fast) so
+        // stale DOM verdicts can't grade the current code.
+        if (m.id !== runNonce) return;
         onDomResults(m.results as Array<boolean | null>);
       }
     };

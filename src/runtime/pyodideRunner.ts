@@ -112,7 +112,19 @@ export class PyodideRunner {
     if (handlers.onStatus) this.statusWaiters.push(handlers.onStatus);
 
     // Only one run at a time; a new run cancels any in-flight one by force.
-    if (this.pending) this.hardReset("Cancelled by a newer run.");
+    // Settle the old promise first so its awaiter doesn't hang forever.
+    if (this.pending) {
+      const old = this.pending;
+      this.pending = null;
+      window.clearTimeout(old.timer);
+      old.resolve({
+        ok: false,
+        stdout: old.stdout,
+        stderr: old.stderr,
+        error: "Cancelled by a newer run.",
+      });
+      this.hardReset("superseded");
+    }
 
     const id = this.nextId++;
     return new Promise<RunResult>((resolve) => {
