@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="180" viewBox="0 0 240 180" role="img" aria-label="A sunny landscape">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#aee2ff"/>
+      <stop offset="1" stop-color="#e8f7ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="180" fill="url(#sky)"/>
+  <circle cx="186" cy="46" r="26" fill="#ffd166"/>
+  <path d="M0 180 L60 96 L110 140 L150 92 L240 168 L240 180 Z" fill="#2bb673"/>
+  <path d="M0 180 L80 132 L150 168 L210 128 L240 152 L240 180 Z" fill="#1f9d6b"/>
+</svg>

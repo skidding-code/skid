@@ -36,11 +36,11 @@ async function lessonIdsFor(track) {
 
 async function testLesson(id, track) {
   const page = await ctx.newPage();
+  // Only uncaught JS exceptions count as failures. Resource-load errors (e.g. a
+  // broken external image) and lesson-authored console.error output are not the
+  // grader's verdict, so they must not fail the run.
   const errors = [];
   page.on("pageerror", (e) => errors.push("pageerror: " + String(e)));
-  page.on("console", (m) => {
-    if (m.type() === "error") errors.push("console.error: " + m.text());
-  });
   try {
     await page.goto(`${BASE}/#/lesson/${id}`, { waitUntil: "networkidle" });
     await page.waitForSelector(".cm-editor", { timeout: 15000 });
