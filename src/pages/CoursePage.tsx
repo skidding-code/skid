@@ -3,6 +3,8 @@ import { getCourse, trackLessons } from "../curriculum";
 import type { Track } from "../curriculum/types";
 import { useProgress } from "../store/progress";
 import { ProgressRing } from "../components/ProgressRing";
+import { LangMark } from "../components/LangMark";
+import { Icon } from "../components/Icon";
 
 export function CoursePage() {
   const { track } = useParams<{ track: string }>();
@@ -13,17 +15,17 @@ export function CoursePage() {
   const list = trackLessons(course.track);
   const done = list.filter((l) => completed[l.lesson.id]).length;
 
+  const accentVars = { ["--c1" as string]: course.accent[0], ["--c2" as string]: course.accent[1] } as React.CSSProperties;
+
   return (
-    <div className="course-page">
+    <div className="course-page" style={accentVars}>
       <div
         className="course-hero"
-        style={
-          { ["--c1" as string]: course.accent[0], ["--c2" as string]: course.accent[1] } as React.CSSProperties
-        }
+        style={accentVars}
       >
         <Link to="/" className="course-hero__back">← All paths</Link>
         <div className="course-hero__row">
-          <span className="course-hero__glyph">{course.glyph}</span>
+          <span className="course-hero__mark"><LangMark track={course.track} size={68} radius={20} /></span>
           <div>
             <h1 className="course-hero__title">{course.title}</h1>
             <p className="course-hero__tag">{course.tagline}</p>
@@ -50,7 +52,7 @@ export function CoursePage() {
           return (
             <section className="chapter" key={chapter.id}>
               <div className="chapter__head">
-                <span className="chapter__glyph">{chapter.glyph}</span>
+                <span className="chapter__glyph" aria-hidden="true">{ci + 1}</span>
                 <div className="chapter__heading">
                   <h2 className="chapter__title">
                     <span className="chapter__num">Chapter {ci + 1}</span>
@@ -69,7 +71,7 @@ export function CoursePage() {
                     <li key={lesson.id}>
                       <Link to={`/lesson/${lesson.id}`} className={`lesson-row ${isDone ? "lesson-row--done" : ""}`}>
                         <span className={`lesson-row__mark ${isDone ? "is-done" : ""}`}>
-                          {isDone ? "✓" : "▶"}
+                          <Icon name={isDone ? "check" : "play"} size={15} />
                         </span>
                         <span className="lesson-row__main">
                           <span className="lesson-row__title">{lesson.title}</span>

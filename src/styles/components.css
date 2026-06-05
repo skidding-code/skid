@@ -506,6 +506,56 @@
 .toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
 
 .route-loading { display: flex; align-items: center; gap: 12px; justify-content: center; padding: 80px 20px; color: var(--text-dim); font-weight: 600; }
+
+/* ── Crafted marks & icons (replacing emoji) ─────────────────────────────── */
+.langmark { filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18)); flex: none; }
+
+/* feature icon chips */
+.feature__glyph {
+  width: 46px; height: 46px; display: grid; place-items: center; border-radius: 13px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent-strong);
+}
+
+/* sandbox card tile (no language mark) */
+.course-card__glyph--tile {
+  width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center;
+  color: #fff; background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  box-shadow: 0 6px 14px rgba(139, 92, 246, 0.3);
+}
+
+/* numbered chapter medallion */
+.chapter__glyph {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; color: #fff;
+  background: linear-gradient(135deg, var(--c1, var(--accent)), var(--c2, var(--accent-strong)));
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+/* header bits */
+.appbar__theme { display: grid; place-items: center; color: var(--text-dim); }
+.appbar__theme:hover { color: var(--text); }
+.appbar__streak { display: inline-flex; align-items: center; gap: 3px; color: #ff7a3d; }
+.appbar__install { display: inline-flex; align-items: center; gap: 6px; }
+.inline-streak { display: inline-flex; align-items: center; gap: 3px; color: #ff7a3d; vertical-align: -2px; }
+
+/* progress page tweaks */
+.lang-progress__body { flex: 1; }
+.stat__big { display: flex; align-items: center; gap: 4px; }
+.stat__big svg { color: #ff7a3d; }
+
+/* badge medallions */
+.badge__emoji {
+  width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 1.7rem; background: var(--surface-3); margin-bottom: 2px;
+}
+.badge--earned .badge__emoji {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, var(--surface)), color-mix(in srgb, var(--good) 28%, var(--surface)));
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* brand logo: use the display font, code-style mark */
+.appbar__logo-glyph { font-family: var(--font-mono); }
+.appbar__title { font-family: var(--font-display); }
 .route-loading__spinner {
   width: 22px; height: 22px; border-radius: 50%;
   border: 3px solid var(--surface-3); border-top-color: var(--accent);

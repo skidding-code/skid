@@ -5,10 +5,13 @@
    ─────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --font-rounded: ui-rounded, "SF Pro Rounded", "Nunito", "Segoe UI", system-ui,
-    -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", "Fira Code",
-    Menlo, Consolas, monospace;
+  /* Body / UI: Inter (variable). Display / headings: Space Grotesk. */
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk", var(--font-sans);
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* Back-compat alias used across the stylesheet. */
+  --font-rounded: var(--font-sans);
 
   --r-sm: 8px;
   --r-md: 14px;
@@ -128,8 +131,9 @@ h2,
 h3,
 h4 {
   margin: 0;
+  font-family: var(--font-display);
   letter-spacing: -0.02em;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 ::selection {

@@ -4,6 +4,8 @@ import { useProgress } from "../store/progress";
 import { ProgressRing } from "../components/ProgressRing";
 import { Mascot } from "../components/Mascot";
 import { XpBar } from "../components/XpBar";
+import { LangMark } from "../components/LangMark";
+import { Icon, type IconName } from "../components/Icon";
 import { xpFromCompleted } from "../game/xp";
 
 export function Home() {
@@ -44,7 +46,10 @@ export function Home() {
               <div className="hero__progress-meta">
                 <XpBar xp={xp} variant="mini" />
                 <span className="hero__progress-line">
-                  {totalDone}/{totalLessons} lessons{streak > 0 ? ` · 🔥 ${streak}-day streak` : ""} — keep going!
+                  {totalDone}/{totalLessons} lessons
+                  {streak > 0 && (
+                    <span className="inline-streak"><Icon name="flame" size={14} /> {streak}-day streak</span>
+                  )}{" "}— keep going!
                 </span>
               </div>
             </Link>
@@ -59,7 +64,7 @@ export function Home() {
       {resume && (
         <section className="resume">
           <Link to={`/lesson/${resume.lesson.id}`} className="resume__card">
-            <span className="resume__glyph">{resume.chapter.glyph}</span>
+            <LangMark track={resume.lesson.track} size={48} />
             <span className="resume__text">
               <span className="resume__eyebrow">Jump back in</span>
               <span className="resume__title">{resume.lesson.title}</span>
@@ -89,7 +94,7 @@ export function Home() {
                 }
               >
                 <div className="course-card__top">
-                  <span className="course-card__glyph">{c.glyph}</span>
+                  <LangMark track={c.track} size={56} />
                   <ProgressRing
                     value={list.length ? done / list.length : 0}
                     gradient={c.accent}
@@ -111,7 +116,7 @@ export function Home() {
 
           <Link to="/sandbox" className="course-card course-card--sandbox">
             <div className="course-card__top">
-              <span className="course-card__glyph">🧪</span>
+              <span className="course-card__glyph course-card__glyph--tile"><Icon name="sparkles" size={28} /></span>
             </div>
             <h3 className="course-card__title">Sandbox</h3>
             <p className="course-card__tag">
@@ -127,16 +132,16 @@ export function Home() {
       <section className="why">
         <h2 className="section-title">Why it sticks</h2>
         <div className="why__grid">
-          <Feature glyph="⚡" title="It actually runs">
+          <Feature icon="bolt" title="It actually runs">
             Python and web run right in your browser; Swift, Java &amp; Rust compile on a hosted runner. Real output, not "trust me, it works."
           </Feature>
-          <Feature glyph="🎯" title="Checks that mean it">
+          <Feature icon="target" title="Checks that mean it">
             Each lesson inspects your real output and code. The little circles only go green when you've genuinely nailed it — no participation trophies.
           </Feature>
-          <Feature glyph="📱" title="Runs on basically anything">
+          <Feature icon="devices" title="Runs on basically anything">
             Phone, tablet, laptop, that suspicious computer in the garage. Install it like an app; your progress tags along.
           </Feature>
-          <Feature glyph="🧭" title="Starts from absolute zero">
+          <Feature icon="compass" title="Starts from absolute zero">
             We begin at "Hello, world!" and sneak up on loops, functions, and tiny apps before you notice you've become a programmer.
           </Feature>
         </div>
@@ -145,10 +150,10 @@ export function Home() {
   );
 }
 
-function Feature({ glyph, title, children }: { glyph: string; title: string; children: React.ReactNode }) {
+function Feature({ icon, title, children }: { icon: IconName; title: string; children: React.ReactNode }) {
   return (
     <div className="feature">
-      <span className="feature__glyph">{glyph}</span>
+      <span className="feature__glyph"><Icon name={icon} size={24} /></span>
       <h3 className="feature__title">{title}</h3>
       <p className="feature__body">{children}</p>
     </div>

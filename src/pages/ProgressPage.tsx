@@ -5,6 +5,8 @@ import { xpFromCompleted, levelInfo, levelTitle } from "../game/xp";
 import { ALL_BADGES, buildBadgeContext, earnedBadgeIds } from "../game/badges";
 import { XpBar } from "../components/XpBar";
 import { ProgressRing } from "../components/ProgressRing";
+import { LangMark } from "../components/LangMark";
+import { Icon } from "../components/Icon";
 
 export function ProgressPage() {
   const { completed, streak, soundOn, setSound, resetAll } = useProgress();
@@ -27,7 +29,7 @@ export function ProgressPage() {
           <div className="profile-hero__stats">
             <Stat big={String(total)} label="lessons done" />
             <Stat big={String(xp)} label="total XP" />
-            <Stat big={`${streak}🔥`} label="day streak" />
+            <Stat big={<><span>{streak}</span><Icon name="flame" size={22} /></>} label="day streak" />
             <Stat big={`${earned.size}/${ALL_BADGES.length}`} label="badges" />
           </div>
         </div>
@@ -41,11 +43,12 @@ export function ProgressPage() {
             const done = list.filter((l) => completed[l.lesson.id]).length;
             return (
               <Link to={`/learn/${c.track}`} key={c.track} className="lang-progress__item">
-                <ProgressRing value={list.length ? done / list.length : 0} gradient={c.accent} id={`pp-${c.track}`} size={56} />
-                <div>
-                  <div className="lang-progress__name">{c.glyph} {c.title}</div>
+                <LangMark track={c.track} size={44} radius={13} />
+                <div className="lang-progress__body">
+                  <div className="lang-progress__name">{c.title}</div>
                   <div className="lang-progress__count">{done}/{list.length} lessons</div>
                 </div>
+                <ProgressRing value={list.length ? done / list.length : 0} gradient={c.accent} id={`pp-${c.track}`} size={40} stroke={5} />
               </Link>
             );
           })}
@@ -59,7 +62,7 @@ export function ProgressPage() {
             const got = earned.has(b.id);
             return (
               <div key={b.id} className={`badge ${got ? "badge--earned" : "badge--locked"}`} title={b.description}>
-                <span className="badge__emoji">{got ? b.emoji : "🔒"}</span>
+                <span className="badge__emoji">{got ? b.emoji : <Icon name="lock" size={22} />}</span>
                 <span className="badge__title">{b.title}</span>
                 <span className="badge__desc">{b.description}</span>
               </div>
@@ -80,7 +83,7 @@ export function ProgressPage() {
   );
 }
 
-function Stat({ big, label }: { big: string; label: string }) {
+function Stat({ big, label }: { big: React.ReactNode; label: string }) {
   return (
     <div className="stat">
       <div className="stat__big">{big}</div>

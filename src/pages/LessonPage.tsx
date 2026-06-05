@@ -18,6 +18,7 @@ import { Prose } from "../components/Prose";
 import { Checklist } from "../components/Checklist";
 import { Mascot, type Mood } from "../components/Mascot";
 import { Confetti } from "../components/Confetti";
+import { LangMark } from "../components/LangMark";
 
 type WebTab = "html" | "css" | "js";
 
@@ -280,7 +281,7 @@ function LessonInner({ flId }: { flId: string }) {
           ←
         </Link>
         <div className="lesson__bar-title">
-          <span className="lesson__bar-glyph">{chapter.glyph}</span>
+          <LangMark track={course.track} size={36} radius={11} />
           <div>
             <div className="lesson__bar-name">{lesson.title}</div>
             <div className="lesson__bar-chapter">

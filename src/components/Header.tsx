@@ -2,9 +2,10 @@ import { Link, useLocation } from "react-router-dom";
 import { useProgress, type ThemeMode } from "../store/progress";
 import { xpFromCompleted, levelInfo } from "../game/xp";
 import { useInstallPrompt } from "../hooks/useInstallPrompt";
+import { Icon, type IconName } from "./Icon";
 
 const order: ThemeMode[] = ["system", "light", "dark"];
-const themeGlyph: Record<ThemeMode, string> = { system: "🌓", light: "☀️", dark: "🌙" };
+const themeIcon: Record<ThemeMode, IconName> = { system: "monitor", light: "sun", dark: "moon" };
 
 export function Header() {
   const { theme, setTheme, completed, streak } = useProgress();
@@ -28,7 +29,9 @@ export function Header() {
       <nav className="appbar__nav">
         {total > 0 && (
           <Link to="/progress" className="appbar__stats" title="Your progress">
-            {streak > 0 && <span className="appbar__streak">🔥{streak}</span>}
+            {streak > 0 && (
+              <span className="appbar__streak"><Icon name="flame" size={15} /> {streak}</span>
+            )}
             <span className="appbar__lvl" aria-label={`Level ${info.level}`}>
               <span className="appbar__lvl-dot">{info.level}</span>
               <span className="appbar__lvl-bar"><span style={{ width: `${Math.round(info.progress * 100)}%` }} /></span>
@@ -39,7 +42,7 @@ export function Header() {
         <Link to="/progress" className="appbar__link appbar__link--hide-sm">Progress</Link>
         {canInstall && (
           <button className="appbar__link appbar__install" onClick={() => void promptInstall()} title="Install Playground as an app">
-            ⬇ Install
+            <Icon name="download" size={16} /> Install
           </button>
         )}
         <button
@@ -48,7 +51,7 @@ export function Header() {
           title={`Theme: ${theme}`}
           aria-label={`Switch theme (currently ${theme})`}
         >
-          {themeGlyph[theme]}
+          <Icon name={themeIcon[theme]} size={18} />
         </button>
       </nav>
     </header>

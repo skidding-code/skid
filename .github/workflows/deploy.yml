@@ -1,10 +1,10 @@
 name: Deploy to GitHub Pages
 
-# Manual trigger: this publishes once GitHub Pages is enabled for the repo
-# (Settings → Pages → Source: "GitHub Actions"). Kept off `push` so it doesn't
-# fail on every commit while Pages is still disabled. To publish: enable Pages,
-# then run this workflow (Actions tab → "Deploy to GitHub Pages" → Run workflow).
+# Publishes on every push to the working branch (the repo is public, so
+# configure-pages can auto-enable Pages). Also runnable manually.
 on:
+  push:
+    branches: ["claude/python-html-js-playground-GHJ2j"]
   workflow_dispatch:
 
 # Allow this workflow to create a Pages deployment.
