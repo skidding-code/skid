@@ -20,6 +20,22 @@ setup, no account, works on any device.
   - 🐦 **Swift**, ☕ **Java**, 🦀 **Rust** (3 chapters / 9 lessons each) —
     basics, control flow & collections, and functions/methods/structs.
 
+## Hosting
+
+The app is build-portable — one `npm run build` works served from a domain root
+**or** a sub-path (e.g. GitHub Pages `/<repo>/`), because the Pyodide runtime and
+the sample asset resolve relative to wherever it's deployed.
+
+A **Deploy to GitHub Pages** workflow (`.github/workflows/deploy.yml`) is ready to
+go. To publish:
+
+1. Enable Pages: repo **Settings → Pages → Source: "GitHub Actions"** (Pages on a
+   *private* repo needs a paid plan; on a *public* repo it's free).
+2. Run the workflow: **Actions → Deploy to GitHub Pages → Run workflow**.
+
+It publishes to `https://<owner>.github.io/<repo>/`. Any static host (Netlify,
+Vercel, Cloudflare Pages, S3) also works — just serve the `dist/` folder.
+
 ## How code runs
 
 - **Python** runs in your browser via Pyodide (WebAssembly), bundled locally so

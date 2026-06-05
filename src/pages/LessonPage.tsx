@@ -33,6 +33,7 @@ function LessonInner({ flId }: { flId: string }) {
   const { lesson, chapter, course } = fl;
   const nav = useNavigate();
   const { prev, next } = neighbors(lesson.id);
+  const posInChapter = chapter.lessons.findIndex((l) => l.id === lesson.id) + 1;
 
   const { saveCode, getSaved, markComplete, isComplete, resetLesson } = useProgress();
   const pushToast = useToasts((s) => s.push);
@@ -200,10 +201,11 @@ function LessonInner({ flId }: { flId: string }) {
   }, []);
 
   const onDomResults = useCallback(
-    (domResults: Array<boolean | null>) => {
+    (domResults: Array<boolean | null>, consoleText?: string) => {
       // Merge: source rules evaluated here; dom rules filled from the iframe.
+      // Prefer the iframe's authoritative console buffer for stdout checks.
       const source = evalSourceRules(lesson.checks, {
-        stdout: consoleTextRef.current,
+        stdout: consoleText ?? consoleTextRef.current,
         code: combinedSource(web),
       });
       let di = 0;
@@ -282,7 +284,7 @@ function LessonInner({ flId }: { flId: string }) {
           <div>
             <div className="lesson__bar-name">{lesson.title}</div>
             <div className="lesson__bar-chapter">
-              {course.title} · {chapter.title}
+              {course.title} · {chapter.title} · Lesson {posInChapter} of {chapter.lessons.length}
             </div>
           </div>
         </div>

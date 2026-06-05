@@ -14,7 +14,9 @@ interface PreviewProps {
   /** Only the DOM-shaped rules; evaluated inside the iframe. */
   domRules: CheckRule[];
   onConsole: (entry: ConsoleEntry) => void;
-  onDomResults: (results: Array<boolean | null>) => void;
+  /** DOM-rule verdicts plus the iframe's authoritative console buffer (used for
+   * stdout-based checks so grading doesn't depend on message timing). */
+  onDomResults: (results: Array<boolean | null>, consoleText?: string) => void;
 }
 
 /** Sandboxed live preview. The iframe runs the learner's code with
@@ -56,20 +58,17 @@ export function Preview({ files, runNonce, domRules, onConsole, onDomResults }: 
       if (m.type === "pg-console") {
         onConsoleRef.current({ level: m.level, text: m.text });
       } else if (m.type === "pg-ready") {
-        const rules = pendingRules.current;
-        if (rules.length) {
-          iframeRef.current?.contentWindow?.postMessage(
-            { type: "pg-validate", id: runNonceRef.current, rules },
-            "*",
-          );
-        } else {
-          onDomResultsRef.current([]);
-        }
+        // Always round-trip: the reply carries the iframe's authoritative
+        // console buffer, so stdout grading never depends on message timing.
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: "pg-validate", id: runNonceRef.current, rules: pendingRules.current },
+          "*",
+        );
       } else if (m.type === "pg-validate-result") {
         // Ignore results from a superseded run (e.g. Run clicked twice fast) so
         // stale DOM verdicts can't grade the current code.
         if (m.id !== runNonceRef.current) return;
-        onDomResultsRef.current(m.results as Array<boolean | null>);
+        onDomResultsRef.current(m.results as Array<boolean | null>, m.console as string);
       }
     };
     window.addEventListener("message", handler);
@@ -82,6 +81,7 @@ export function Preview({ files, runNonce, domRules, onConsole, onDomResults }: 
       className="preview-frame"
       title="Live preview"
       sandbox="allow-scripts"
+      referrerPolicy="no-referrer"
       srcDoc={srcDoc}
     />
   );

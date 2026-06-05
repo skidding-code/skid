@@ -15,7 +15,7 @@
 // under <base>/assets/, so "../pyodide/" lands on <base>/pyodide/; in dev the
 // worker is served from /src/... so fall back to the root /pyodide/.
 const INDEX_URL = import.meta.url.includes("/assets/")
-  ? new URL("../pyodide/", import.meta.url).href
+  ? new URL(/* @vite-ignore */ "../pyodide/", import.meta.url).href
   : new URL("/pyodide/", self.location.origin).href;
 
 type InMsg = { type: "run"; id: number; code: string };

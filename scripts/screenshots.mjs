@@ -7,7 +7,7 @@ mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch();
 
-async function shot(name, { path, width = 1280, height = 860, theme = "dark", prep, completed } = {}) {
+async function shot(name, { path, width = 1280, height = 860, theme = "dark", prep, completed, streak = 0 } = {}) {
   const ctx = await browser.newContext({
     viewport: { width, height },
     colorScheme: theme === "dark" ? "dark" : "light",
@@ -34,13 +34,16 @@ async function shot(name, { path, width = 1280, height = 860, theme = "dark", pr
   }
 
   await page.evaluate(
-    ({ t, d }) => {
+    ({ t, d, s }) => {
       localStorage.setItem(
         "playground-progress-v1",
-        JSON.stringify({ state: { completed: d, saved: {}, theme: t }, version: 0 }),
+        JSON.stringify({
+          state: { completed: d, saved: {}, theme: t, soundOn: true, streak: s, lastActiveDay: null },
+          version: 0,
+        }),
       );
     },
-    { t: theme, d: done },
+    { t: theme, d: done, s: streak },
   );
   await page.reload({ waitUntil: "networkidle" });
   if (prep) await prep(page);
@@ -78,6 +81,16 @@ await shot("10-course-complete", { path: "/learn/python", theme: "light", comple
 await shot("11-lesson-rust", { path: "/lesson/rust-hello", theme: "dark", prep: (p) => p.waitForSelector(".cm-editor") });
 await shot("12-lesson-java", { path: "/lesson/java-hello", theme: "light", prep: (p) => p.waitForSelector(".cm-editor") });
 await shot("13-sandbox-languages", { path: "/sandbox", theme: "dark", prep: (p) => p.waitForSelector(".seg") });
+await shot("14-progress", {
+  path: "/progress",
+  theme: "dark",
+  streak: 5,
+  completed: [
+    "py-hello", "py-many-lines", "py-math", "py-make-a-variable", "py-text-and-numbers",
+    "py-build-a-sentence", "web-heading-paragraph", "web-text-structure", "swift-hello",
+  ],
+  prep: (p) => p.waitForSelector(".badge--earned"),
+});
 
 await browser.close();
 console.log("done");

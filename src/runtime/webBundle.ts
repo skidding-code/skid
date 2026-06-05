@@ -12,25 +12,31 @@ import type { CheckRule, WebFiles } from "../curriculum/types";
 export const BRIDGE_SCRIPT = String.raw`
 (function () {
   var send = function (m) { parent.postMessage(m, "*"); };
+  // Authoritative console buffer, returned with the validation result so the
+  // parent never has to depend on postMessage timing/ordering to grade stdout.
+  var consoleBuf = "";
   function fmt(args) {
     return Array.prototype.map.call(args, function (a) {
       if (typeof a === "string") return a;
       try { return JSON.stringify(a); } catch (e) { return String(a); }
     }).join(" ");
   }
+  function record(level, text) {
+    consoleBuf += text + "\n";
+    send({ type: "pg-console", level: level, text: text }); // live streaming
+  }
   ["log", "info", "warn", "error", "debug"].forEach(function (level) {
     var orig = console[level] ? console[level].bind(console) : function () {};
     console[level] = function () {
-      send({ type: "pg-console", level: level === "debug" ? "log" : level, text: fmt(arguments) });
+      record(level === "debug" ? "log" : level, fmt(arguments));
       orig.apply(console, arguments);
     };
   });
   window.addEventListener("error", function (e) {
-    send({ type: "pg-console", level: "error", text: (e.message || "Script error") +
-      (e.lineno ? " (line " + e.lineno + ")" : "") });
+    record("error", (e.message || "Script error") + (e.lineno ? " (line " + e.lineno + ")" : ""));
   });
   window.addEventListener("unhandledrejection", function (e) {
-    send({ type: "pg-console", level: "error", text: "Unhandled promise rejection: " + (e.reason && e.reason.message || e.reason) });
+    record("error", "Unhandled promise rejection: " + (e.reason && e.reason.message || e.reason));
   });
 
   function evalRule(rule) {
@@ -78,7 +84,7 @@ export const BRIDGE_SCRIPT = String.raw`
     var m = e.data;
     if (!m || m.type !== "pg-validate") return;
     var results = (m.rules || []).map(function (r) { return evalRule(r); });
-    send({ type: "pg-validate-result", id: m.id, results: results });
+    send({ type: "pg-validate-result", id: m.id, results: results, console: consoleBuf });
   });
 
   // Give scripts a tick to run, then announce readiness.
