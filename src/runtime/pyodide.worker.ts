@@ -58,8 +58,12 @@ ctx.onmessage = async (ev: MessageEvent<InMsg>) => {
   const { id, code } = msg;
   try {
     await boot();
-    pyodide.setStdout({ batched: (t: string) => post({ type: "stdout", id, text: t }) });
-    pyodide.setStderr({ batched: (t: string) => post({ type: "stderr", id, text: t }) });
+    // Pyodide's `batched` callback fires once per flushed line and strips the
+    // trailing newline. Re-add exactly one so accumulated output preserves line
+    // boundaries (needed for line-count / multi-line checks).
+    const line = (t: string) => (t.endsWith("\n") ? t : t + "\n");
+    pyodide.setStdout({ batched: (t: string) => post({ type: "stdout", id, text: line(t) }) });
+    pyodide.setStderr({ batched: (t: string) => post({ type: "stderr", id, text: line(t) }) });
     await pyodide.runPythonAsync(code);
     post({ type: "result", id, ok: true });
   } catch (err) {

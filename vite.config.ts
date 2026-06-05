@@ -61,5 +61,23 @@ export default defineConfig({
   build: {
     target: "es2021",
     sourcemap: false,
+    chunkSizeWarningLimit: 1200,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          codemirror: [
+            "@uiw/react-codemirror",
+            "@codemirror/view",
+            "@codemirror/state",
+            "@codemirror/lang-python",
+            "@codemirror/lang-html",
+            "@codemirror/lang-css",
+            "@codemirror/lang-javascript",
+            "@uiw/codemirror-theme-github",
+          ],
+        },
+      },
+    },
   },
 });

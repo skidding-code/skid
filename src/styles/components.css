@@ -394,6 +394,14 @@
 
 .notfound { max-width: 600px; margin: 80px auto; text-align: center; display: flex; flex-direction: column; gap: 20px; align-items: center; }
 
+.route-loading { display: flex; align-items: center; gap: 12px; justify-content: center; padding: 80px 20px; color: var(--text-dim); font-weight: 600; }
+.route-loading__spinner {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 3px solid var(--surface-3); border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ── Responsive: stack the lesson on narrow screens (phones) ───────────────── */
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; }
