@@ -39,6 +39,8 @@ export function Editor({ value, language, onChange, readOnly, ariaLabel }: Edito
     () => [
       langExtension(language),
       EditorView.lineWrapping,
+      // Give the editable surface an accessible name (axe: aria-input-field-name).
+      EditorView.contentAttributes.of({ "aria-label": ariaLabel ?? "Code editor" }),
       EditorView.theme({
         "&": { fontSize: "15px", height: "100%" },
         ".cm-content": { fontFamily: "var(--font-mono)", padding: "12px 0" },
@@ -47,7 +49,7 @@ export function Editor({ value, language, onChange, readOnly, ariaLabel }: Edito
         "&.cm-focused": { outline: "none" },
       }),
     ],
-    [language],
+    [language, ariaLabel],
   );
 
   return (

@@ -41,10 +41,18 @@ Requires Node 18+.
 
 ## Tested
 
-Beyond type-checking, there's a real end-to-end browser test that opens **every
-lesson** in headless Chromium, reveals the known-good solution, runs it, and
-asserts the grader reports all goals met — so the runtime, live preview, checker,
-and lesson content are verified together.
+This project is verified, not just shipped. CI (`.github/workflows/ci.yml`) runs
+all of it on every push:
+
+- **Type-check** (`npm run typecheck`) and **unit tests** (`npm test`) for the
+  grading engine and preview bundler.
+- **End-to-end** (`npm run e2e`) — opens **every lesson** in headless Chromium,
+  reveals the known-good solution, runs it, and asserts the grader reports all
+  goals met. Runtime, live preview, checker, and content verified together.
+- **Offline PWA** (`npm run e2e:offline`) — runs the app and Python with the
+  network cut, from the service-worker cache.
+- **Accessibility** (`npm run a11y`) — axe-core scan of every screen; the build
+  is kept free of serious/critical WCAG 2.1 AA violations.
 
 ```bash
 npm run build && npm run preview &   # serve dist on :4173
