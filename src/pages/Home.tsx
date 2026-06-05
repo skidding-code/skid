@@ -3,12 +3,16 @@ import { courses, trackLessons, nextIncomplete, getLesson } from "../curriculum"
 import { useProgress } from "../store/progress";
 import { ProgressRing } from "../components/ProgressRing";
 import { Mascot } from "../components/Mascot";
+import { XpBar } from "../components/XpBar";
+import { xpFromCompleted } from "../game/xp";
 
 export function Home() {
   const completed = useProgress((s) => s.completed);
+  const streak = useProgress((s) => s.streak);
 
   const totalLessons = courses.reduce((n, c) => n + trackLessons(c.track).length, 0);
   const totalDone = Object.keys(completed).length;
+  const xp = xpFromCompleted(totalDone);
 
   // Most-recently completed lesson → resume from the next one in that track.
   const lastDoneId = Object.entries(completed).sort((a, b) => b[1] - a[1])[0]?.[0];
@@ -35,12 +39,15 @@ export function Home() {
             <Link to="/learn/web" className="btn btn--ghost btn--lg">Build a web page</Link>
           </div>
           {totalDone > 0 && (
-            <div className="hero__progress">
+            <Link to="/progress" className="hero__progress">
               <ProgressRing value={totalDone / totalLessons} size={44} stroke={5} id="hero" />
-              <span>
-                {totalDone} of {totalLessons} lessons complete — keep going!
-              </span>
-            </div>
+              <div className="hero__progress-meta">
+                <XpBar xp={xp} variant="mini" />
+                <span className="hero__progress-line">
+                  {totalDone}/{totalLessons} lessons{streak > 0 ? ` · 🔥 ${streak}-day streak` : ""} — keep going!
+                </span>
+              </div>
+            </Link>
           )}
         </div>
         <div className="hero__art" aria-hidden="true">

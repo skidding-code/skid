@@ -15,6 +15,7 @@ const PAGES = [
   { name: "Lesson (Web)", path: "/lesson/web-about-me", wait: ".cm-editor" },
   { name: "Lesson (Java)", path: "/lesson/java-hello", wait: ".cm-editor" },
   { name: "Sandbox", path: "/sandbox", wait: ".cm-editor" },
+  { name: "Progress", path: "/progress", wait: ".profile-hero" },
 ];
 
 const browser = await chromium.launch();

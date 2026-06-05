@@ -126,7 +126,7 @@ export const ch02: Chapter = {
         {
           type: "code",
           lang: "html",
-          text: '<img src="/samples/photo.svg" alt="A sunny landscape" />',
+          text: '<img src="samples/photo.svg" alt="A sunny landscape" />',
         },
         {
           type: "callout",
@@ -135,7 +135,7 @@ export const ch02: Chapter = {
         },
         {
           type: "p",
-          text: 'Add an <img> with src "/samples/photo.svg" and alt text that reads exactly: A sunny landscape.',
+          text: 'Add an <img> with src "samples/photo.svg" and alt text that reads exactly: A sunny landscape.',
         },
       ],
       starter: {
@@ -145,19 +145,19 @@ export const ch02: Chapter = {
       },
       solution: {
         html:
-          '<h1>Gallery</h1>\n<img src="/samples/photo.svg" alt="A sunny landscape" />\n',
+          '<h1>Gallery</h1>\n<img src="samples/photo.svg" alt="A sunny landscape" />\n',
         css: "",
         js: "",
       },
       checks: [
         { label: "Add an <img> tag", kind: "domExists", value: "img" },
-        { label: "Point its src at the picture", kind: "domAttrEquals", value: "img::src::/samples/photo.svg" },
+        { label: "Point its src at the picture", kind: "domAttrEquals", value: "img::src::samples/photo.svg" },
         { label: "Describe it with alt text", kind: "domAttrEquals", value: "img::alt::A sunny landscape" },
       ],
       hints: [
         "An <img> needs both a src and an alt attribute.",
-        'Start with: <img src="/samples/photo.svg" ...',
-        'The full tag is: <img src="/samples/photo.svg" alt="A sunny landscape" />',
+        'Start with: <img src="samples/photo.svg" ...',
+        'The full tag is: <img src="samples/photo.svg" alt="A sunny landscape" />',
       ],
       wellDone: "Picture on the page, words for everyone — that is how images should always be.",
     },

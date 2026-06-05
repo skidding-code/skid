@@ -3,10 +3,14 @@ import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
 import { getLesson, neighbors } from "../curriculum";
 import { isWebFiles, isRemoteTrack, type Track, type WebFiles } from "../curriculum/types";
 import { useProgress } from "../store/progress";
+import { useToasts } from "../store/toasts";
 import { pythonRunner } from "../runtime/pyodideRunner";
 import { runRemote } from "../runtime/remoteRunner";
 import { evalSourceRules, type RuleResult } from "../runtime/checker";
 import { combinedSource, isDomRule } from "../runtime/webBundle";
+import { XP_PER_LESSON, xpFromCompleted, levelInfo, levelTitle } from "../game/xp";
+import { buildBadgeContext, earnedBadgeIds, badgeById } from "../game/badges";
+import { playSuccess, playLevelUp, playBadge } from "../game/sound";
 import { Editor, type EditorLang } from "../components/Editor";
 import { Console, type OutputLine } from "../components/Console";
 import { Preview, type ConsoleEntry } from "../components/Preview";
@@ -31,6 +35,7 @@ function LessonInner({ flId }: { flId: string }) {
   const { prev, next } = neighbors(lesson.id);
 
   const { saveCode, getSaved, markComplete, isComplete, resetLesson } = useProgress();
+  const pushToast = useToasts((s) => s.push);
 
   const isWeb = lesson.track === "web";
   const isPython = lesson.track === "python";
@@ -108,15 +113,42 @@ function LessonInner({ flId }: { flId: string }) {
       if (success) {
         setMood("happy");
         if (!isComplete(lesson.id)) {
+          // First-time completion → award XP, fire reward toasts, level-ups, badges.
+          const before = useProgress.getState();
+          const beforeCount = Object.keys(before.completed).length;
+          const beforeLevel = levelInfo(xpFromCompleted(beforeCount)).level;
+          const beforeBadges = earnedBadgeIds(buildBadgeContext(before.completed, before.streak));
+
           markComplete(lesson.id);
+
+          const after = useProgress.getState();
+          const afterCount = Object.keys(after.completed).length;
+          const afterLevel = levelInfo(xpFromCompleted(afterCount)).level;
+          const afterBadges = earnedBadgeIds(buildBadgeContext(after.completed, after.streak));
+
           setConfetti((c) => c + 1);
+          playSuccess();
+          pushToast({ kind: "xp", emoji: "⭐", title: `+${XP_PER_LESSON} XP`, detail: lesson.title });
+          if (afterLevel > beforeLevel) {
+            playLevelUp();
+            pushToast({ kind: "level", emoji: "🎉", title: `Level ${afterLevel}!`, detail: levelTitle(afterLevel) });
+          }
+          for (const id of afterBadges) {
+            if (!beforeBadges.has(id)) {
+              const b = badgeById(id);
+              if (b) {
+                playBadge();
+                pushToast({ kind: "badge", emoji: b.emoji, title: "Badge unlocked!", detail: b.title });
+              }
+            }
+          }
         }
         if (rr.length > 0) setCelebrate(true);
       } else {
         setMood("oops");
       }
     },
-    [isComplete, markComplete, lesson.id],
+    [isComplete, markComplete, lesson.id, lesson.title, pushToast],
   );
 
   // ── Single-file code run (Python locally; Swift/Java/Rust on the hosted runner) ──

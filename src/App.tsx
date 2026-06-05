@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import { Header } from "./components/Header";
+import { ToastHost } from "./components/ToastHost";
 import { Home } from "./pages/Home";
 import { useResolvedTheme } from "./hooks/useTheme";
 
@@ -9,6 +10,7 @@ import { useResolvedTheme } from "./hooks/useTheme";
 const CoursePage = lazy(() => import("./pages/CoursePage").then((m) => ({ default: m.CoursePage })));
 const LessonPage = lazy(() => import("./pages/LessonPage").then((m) => ({ default: m.LessonPage })));
 const SandboxPage = lazy(() => import("./pages/SandboxPage").then((m) => ({ default: m.SandboxPage })));
+const ProgressPage = lazy(() => import("./pages/ProgressPage").then((m) => ({ default: m.ProgressPage })));
 
 function NotFound() {
   return (
@@ -44,10 +46,12 @@ function Shell() {
             <Route path="/learn/:track" element={<CoursePage />} />
             <Route path="/lesson/:id" element={<LessonPage />} />
             <Route path="/sandbox" element={<SandboxPage />} />
+            <Route path="/progress" element={<ProgressPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </main>
+      <ToastHost />
     </div>
   );
 }

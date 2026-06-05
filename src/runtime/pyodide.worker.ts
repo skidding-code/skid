@@ -9,9 +9,14 @@
  */
 
 // Pyodide is served from our own origin (copied into /public/pyodide at build
-// time) so Python works offline and needs no third-party CDN. Resolved from the
-// worker's own location so it survives sub-path hosting.
-const INDEX_URL = new URL("/pyodide/", self.location.origin).href;
+// time) so Python works offline and needs no third-party CDN. Resolve it
+// relative to wherever the app is hosted so it works at the domain root AND on a
+// sub-path (e.g. GitHub Pages /<repo>/). In the production build the worker lives
+// under <base>/assets/, so "../pyodide/" lands on <base>/pyodide/; in dev the
+// worker is served from /src/... so fall back to the root /pyodide/.
+const INDEX_URL = import.meta.url.includes("/assets/")
+  ? new URL("../pyodide/", import.meta.url).href
+  : new URL("/pyodide/", self.location.origin).href;
 
 type InMsg = { type: "run"; id: number; code: string };
 type OutMsg =
