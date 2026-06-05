@@ -1,8 +1,9 @@
 # Playground — Learn to Code
 
-A Swift Playgrounds–style, hands-on way to learn **Python** and the **web**
-(HTML, CSS, JavaScript). Every lesson runs for real, right in the browser — no
-setup, no account, works on any device.
+A Swift Playgrounds–style, hands-on way to learn to code across **five
+languages**. Every lesson runs for real, right in the browser — no setup, no
+account, works on any device. And it's a game: you earn XP, level up, keep a
+streak, and unlock badges as you go.
 
 ![icon](public/icons/icon-192.png)
 
@@ -19,6 +20,15 @@ setup, no account, works on any device.
     homepage, and responsive design.
   - 🐦 **Swift**, ☕ **Java**, 🦀 **Rust** (3 chapters / 9 lessons each) —
     basics, control flow & collections, and functions/methods/structs.
+
+- **Learning is a game:** every lesson grants XP toward leveling up (with playful
+  titles), a daily **streak** keeps you coming back, and **12 badges** unlock as
+  you hit milestones. Completing a lesson pops `+XP` / level-up / badge toasts
+  with little sound chimes (mutable) and confetti. A **Progress** page is your
+  trophy room; courses read as a "journey" path.
+
+- **Installable PWA:** add it to your home screen / desktop and it runs like a
+  native app — Python and the web lessons even work **offline**.
 
 ## Hosting
 
@@ -119,13 +129,18 @@ in [`docs/NATIVE.md`](docs/NATIVE.md).
 
 ```
 src/
-  curriculum/        Pure-data lessons (python/ and web/) + the type schema
-  runtime/           Pyodide worker + controller, web preview bundle, checker
-  components/        Editor (CodeMirror), Console, Preview, Checklist, Mascot…
-  pages/             Home, CoursePage, LessonPage, SandboxPage
-  store/             Progress (zustand + localStorage)
+  curriculum/        Pure-data lessons (python/ web/ swift/ java/ rust/) + schema
+  runtime/           Pyodide worker + controller, hosted runner (Wandbox),
+                     web preview bundle, checker
+  game/              XP/levels, badges, sound effects
+  components/        Editor (CodeMirror), Console, Preview, Toasts, XpBar, Mascot…
+  pages/             Home, CoursePage, LessonPage, SandboxPage, ProgressPage
+  store/             Progress + streak (zustand + localStorage), reward toasts
   styles/            Design tokens + component styles
 ```
+
+See [`docs/AUTHORING.md`](docs/AUTHORING.md) to add lessons and
+[`SECURITY.md`](SECURITY.md) for the sandbox/security model.
 
 Lessons are **plain serializable data** (`Lesson` objects with declarative
 `CheckRule`s), so the curriculum is easy to extend, validate, and reuse.
