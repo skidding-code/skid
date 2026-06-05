@@ -44,3 +44,6 @@ jobs:
 
       - name: End-to-end (every lesson runs + grades in a real browser)
         run: npm run e2e
+
+      - name: Offline PWA (app + Python run with the network cut)
+        run: npm run e2e:offline

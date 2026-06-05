@@ -49,7 +49,13 @@ and lesson content are verified together.
 ```bash
 npm run build && npm run preview &   # serve dist on :4173
 npm run e2e                          # 66/66 lessons pass end-to-end
+npm run e2e:offline                  # app + Python run with the network cut
 ```
+
+The offline test is the real proof of the PWA promise: it loads the app, runs
+Python once (caching the runtime via the service worker), then **cuts the
+network**, reloads from cache, and confirms a fresh Python worker still boots
+and grades a lesson green.
 
 ## How it reaches every platform
 
