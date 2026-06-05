@@ -75,6 +75,9 @@ await shot("09-home-progress", {
   completed: ["py-hello", "py-many-lines", "py-math", "py-make-a-variable"],
 });
 await shot("10-course-complete", { path: "/learn/python", theme: "light", completed: "*python" });
+await shot("11-lesson-rust", { path: "/lesson/rust-hello", theme: "dark", prep: (p) => p.waitForSelector(".cm-editor") });
+await shot("12-lesson-java", { path: "/lesson/java-hello", theme: "light", prep: (p) => p.waitForSelector(".cm-editor") });
+await shot("13-sandbox-languages", { path: "/sandbox", theme: "dark", prep: (p) => p.waitForSelector(".seg") });
 
 await browser.close();
 console.log("done");
