@@ -21,7 +21,13 @@ function Glyph({ track }: { track: Track }) {
   };
   switch (track) {
     case "python":
-      return <path d="M60 30 C42 30 42 47 51 50 C42 53 42 70 60 70" {...stroke} />;
+      // a coiled snake: S-curve body + a small head
+      return (
+        <>
+          <path d="M62 30 C44 30 44 46 51 50 C58 54 56 70 38 70" {...stroke} />
+          <circle cx="62" cy="30" r="4.5" fill="#fff" />
+        </>
+      );
     case "web":
       return (
         <>
