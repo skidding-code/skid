@@ -35,18 +35,23 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Pyodide is large and loaded from a CDN at runtime; cache it so the
-        // Python runtime keeps working offline after the first successful run.
-        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+        // Precache the app shell, but NOT the heavy Pyodide runtime — those
+        // (~12 MB) are cached on first use via runtimeCaching so the initial
+        // install stays light.
         globPatterns: ["**/*.{js,css,html,svg,png,woff2,json}"],
+        globIgnores: ["pyodide/**"],
+        navigateFallbackDenylist: [/^\/pyodide\//],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/pyodide\/.*/i,
+            // Same-origin Pyodide runtime (wasm, stdlib, lock, js): cache-first
+            // so Python keeps working fully offline after the first run.
+            urlPattern: /\/pyodide\//,
             handler: "CacheFirst",
             options: {
-              cacheName: "pyodide-cdn",
-              expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheName: "pyodide-runtime",
+              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 60 },
               cacheableResponse: { statuses: [0, 200] },
+              rangeRequests: true,
             },
           },
         ],

@@ -5,3 +5,9 @@ dist-ssr
 .DS_Store
 .vite
 coverage
+
+# Pyodide runtime is copied in from node_modules at build time (~14 MB) — not committed.
+public/pyodide
+
+# Internal scaffolding for content-authoring agents.
+AGENT_SPEC.md

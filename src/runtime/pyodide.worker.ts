@@ -8,8 +8,10 @@
  * under the app's DOM lib without pulling in the conflicting WebWorker lib.
  */
 
-const PYODIDE_VERSION = "0.26.4";
-const INDEX_URL = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
+// Pyodide is served from our own origin (copied into /public/pyodide at build
+// time) so Python works offline and needs no third-party CDN. Resolved from the
+// worker's own location so it survives sub-path hosting.
+const INDEX_URL = new URL("/pyodide/", self.location.origin).href;
 
 type InMsg = { type: "run"; id: number; code: string };
 type OutMsg =
