@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { useProgress, type ThemeMode } from "../store/progress";
 import { xpFromCompleted, levelInfo } from "../game/xp";
+import { useInstallPrompt } from "../hooks/useInstallPrompt";
 
 const order: ThemeMode[] = ["system", "light", "dark"];
 const themeGlyph: Record<ThemeMode, string> = { system: "🌓", light: "☀️", dark: "🌙" };
 
 export function Header() {
   const { theme, setTheme, completed, streak } = useProgress();
+  const { canInstall, promptInstall } = useInstallPrompt();
   const loc = useLocation();
   const isLesson = loc.pathname.startsWith("/lesson/");
 
@@ -35,6 +37,11 @@ export function Header() {
         )}
         <Link to="/sandbox" className="appbar__link appbar__link--hide-sm">Sandbox</Link>
         <Link to="/progress" className="appbar__link appbar__link--hide-sm">Progress</Link>
+        {canInstall && (
+          <button className="appbar__link appbar__install" onClick={() => void promptInstall()} title="Install Playground as an app">
+            ⬇ Install
+          </button>
+        )}
         <button
           className="appbar__theme"
           onClick={() => setTheme(order[(order.indexOf(theme) + 1) % order.length])}

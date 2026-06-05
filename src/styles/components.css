@@ -446,6 +446,13 @@
 .appbar__lvl-bar { width: 54px; height: 7px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
 .appbar__lvl-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #2bd07c); transition: width 0.6s var(--ease-spring); }
 @media (max-width: 560px) { .appbar__link--hide-sm { display: none; } }
+.appbar__install {
+  cursor: pointer; font-weight: 800; font-size: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent-strong); border-radius: var(--r-pill); padding: 8px 14px;
+}
+.appbar__install:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 
 .hero__progress { display: flex; align-items: center; gap: 14px; margin-top: 26px; color: var(--text-dim); text-decoration: none; }
 .hero__progress:hover { color: var(--text); }
