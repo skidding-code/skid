@@ -61,3 +61,12 @@ export function courseStats(track: Track) {
   const list = trackLessons(track);
   return { total: list.length };
 }
+
+/** The first lesson in a track the learner hasn't completed yet — i.e. where to
+ * resume. Returns undefined when the whole track is done. */
+export function nextIncomplete(
+  track: Track,
+  completed: Record<string, number>,
+): FlatLesson | undefined {
+  return trackLessons(track).find((fl) => !completed[fl.lesson.id]);
+}

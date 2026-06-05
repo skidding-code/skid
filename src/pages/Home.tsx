@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { courses, trackLessons } from "../curriculum";
+import { courses, trackLessons, nextIncomplete, getLesson } from "../curriculum";
 import { useProgress } from "../store/progress";
 import { ProgressRing } from "../components/ProgressRing";
 import { Mascot } from "../components/Mascot";
@@ -9,6 +9,11 @@ export function Home() {
 
   const totalLessons = courses.reduce((n, c) => n + trackLessons(c.track).length, 0);
   const totalDone = Object.keys(completed).length;
+
+  // Most-recently completed lesson → resume from the next one in that track.
+  const lastDoneId = Object.entries(completed).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const lastTrack = lastDoneId ? getLesson(lastDoneId)?.lesson.track : undefined;
+  const resume = lastTrack ? nextIncomplete(lastTrack, completed) : undefined;
 
   return (
     <div className="home">
@@ -41,6 +46,20 @@ export function Home() {
           <Mascot mood="happy" size={150} />
         </div>
       </section>
+
+      {resume && (
+        <section className="resume">
+          <Link to={`/lesson/${resume.lesson.id}`} className="resume__card">
+            <span className="resume__glyph">{resume.chapter.glyph}</span>
+            <span className="resume__text">
+              <span className="resume__eyebrow">Jump back in</span>
+              <span className="resume__title">{resume.lesson.title}</span>
+              <span className="resume__sub">{resume.course.title} · {resume.chapter.title}</span>
+            </span>
+            <span className="resume__go">Resume →</span>
+          </Link>
+        </section>
+      )}
 
       <section className="tracks">
         <h2 className="section-title">Pick a path</h2>

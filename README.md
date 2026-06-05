@@ -8,12 +8,15 @@ setup, no account, works on any device.
 
 ## What it is
 
-- **Two full courses — 57 lessons across 19 chapters:**
-  - 🐍 **Python** (10 chapters, 30 lessons) — printing, variables, decisions,
-    loops, lists, functions, strings, dictionaries, error handling, and classes.
-  - 🌐 **Web** (9 chapters, 27 lessons) — your first page, links/lists/images,
-    CSS styling, flexbox layout, JavaScript, forms, events, animations, and
-    capstone mini-apps (click counter, color changer, mood board).
+- **Two full courses — 66 lessons across 22 chapters:**
+  - 🐍 **Python** (12 chapters, 36 lessons) — printing, variables, decisions,
+    loops, lists, functions, strings, dictionaries, error handling, classes,
+    modules & randomness, and capstone mini-projects (FizzBuzz, times tables, a
+    scoreboard).
+  - 🌐 **Web** (10 chapters, 30 lessons) — your first page, links/lists/images,
+    CSS styling, flexbox layout, JavaScript, forms, events, animations, capstone
+    mini-apps (click counter, color changer, mood board), and a full personal
+    homepage.
 - **Real execution.** Python runs in your browser via
   [Pyodide](https://pyodide.org/) (WebAssembly) in a Web Worker, so a runaway
   loop never freezes the UI. Web lessons render in a sandboxed live preview with
@@ -45,7 +48,7 @@ and lesson content are verified together.
 
 ```bash
 npm run build && npm run preview &   # serve dist on :4173
-npm run e2e                          # 57/57 lessons pass end-to-end
+npm run e2e                          # 66/66 lessons pass end-to-end
 ```
 
 ## How it reaches every platform

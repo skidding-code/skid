@@ -157,6 +157,23 @@
 
 .section-title { font-size: clamp(1.4rem, 3vw, 1.9rem); margin: 40px 0 18px; }
 
+/* "Jump back in" resume card */
+.resume { margin-top: 8px; }
+.resume__card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 20px; border-radius: var(--r-lg);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 16%, var(--surface)), var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  box-shadow: var(--shadow-sm); transition: transform 0.15s var(--ease-spring), box-shadow 0.2s;
+}
+.resume__card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.resume__glyph { font-size: 2rem; width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--r-md); background: var(--surface-2); }
+.resume__text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.resume__eyebrow { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-strong); }
+.resume__title { font-weight: 800; font-size: 1.1rem; }
+.resume__sub { color: var(--text-dim); font-size: 0.85rem; }
+.resume__go { font-weight: 800; color: var(--accent-strong); white-space: nowrap; }
+
 /* ── Course cards ─────────────────────────────────────────────────────────── */
 .tracks__grid, .why__grid {
   display: grid;
