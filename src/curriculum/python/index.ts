@@ -11,6 +11,7 @@ import { ch09 } from "./ch09";
 import { ch10 } from "./ch10";
 import { ch11 } from "./ch11";
 import { ch12 } from "./ch12";
+import { ch13 } from "./ch13";
 
 export const pythonCourse: Course = {
   track: "python",
@@ -18,5 +19,5 @@ export const pythonCourse: Course = {
   tagline: "A friendly first language. Talk to the computer, teach it to think.",
   glyph: "🐍",
   accent: ["#3b82f6", "#22c55e"],
-  chapters: [ch01, ch02, ch03, ch04, ch05, ch06, ch07, ch08, ch09, ch10, ch11, ch12],
+  chapters: [ch01, ch02, ch03, ch04, ch05, ch06, ch07, ch08, ch09, ch10, ch11, ch12, ch13],
 };

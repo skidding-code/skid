@@ -8,15 +8,15 @@ setup, no account, works on any device.
 
 ## What it is
 
-- **Two full courses — 66 lessons across 22 chapters:**
-  - 🐍 **Python** (12 chapters, 36 lessons) — printing, variables, decisions,
+- **Two full courses — 72 lessons across 24 chapters:**
+  - 🐍 **Python** (13 chapters, 39 lessons) — printing, variables, decisions,
     loops, lists, functions, strings, dictionaries, error handling, classes,
-    modules & randomness, and capstone mini-projects (FizzBuzz, times tables, a
-    scoreboard).
-  - 🌐 **Web** (10 chapters, 30 lessons) — your first page, links/lists/images,
+    modules & randomness, capstone mini-projects (FizzBuzz, times tables, a
+    scoreboard), and comprehensions & tuples.
+  - 🌐 **Web** (11 chapters, 33 lessons) — your first page, links/lists/images,
     CSS styling, flexbox layout, JavaScript, forms, events, animations, capstone
-    mini-apps (click counter, color changer, mood board), and a full personal
-    homepage.
+    mini-apps (click counter, color changer, mood board), a full personal
+    homepage, and responsive design.
 - **Real execution.** Python runs in your browser via
   [Pyodide](https://pyodide.org/) (WebAssembly) in a Web Worker, so a runaway
   loop never freezes the UI. Web lessons render in a sandboxed live preview with
@@ -48,7 +48,7 @@ all of it on every push:
   grading engine and preview bundler.
 - **End-to-end** (`npm run e2e`) — opens **every lesson** in headless Chromium,
   reveals the known-good solution, runs it, and asserts the grader reports all
-  goals met. Runtime, live preview, checker, and content verified together.
+  goals met (72/72). Runtime, live preview, checker, and content verified together.
 - **Offline PWA** (`npm run e2e:offline`) — runs the app and Python with the
   network cut, from the service-worker cache.
 - **Accessibility** (`npm run a11y`) — axe-core scan of every screen; the build
@@ -56,7 +56,7 @@ all of it on every push:
 
 ```bash
 npm run build && npm run preview &   # serve dist on :4173
-npm run e2e                          # 66/66 lessons pass end-to-end
+npm run e2e                          # 72/72 lessons pass end-to-end
 npm run e2e:offline                  # app + Python run with the network cut
 ```
 
