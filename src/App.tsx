@@ -13,8 +13,11 @@ const SandboxPage = lazy(() => import("./pages/SandboxPage").then((m) => ({ defa
 function NotFound() {
   return (
     <div className="notfound">
-      <h1>Hmm, nothing here.</h1>
-      <Link to="/" className="btn btn--primary">Back home</Link>
+      <h1>404: this page ran off to debug itself.</h1>
+      <p style={{ color: "var(--text-dim)" }}>
+        It's not you, it's our routing. Let's get you somewhere that exists.
+      </p>
+      <Link to="/" className="btn btn--primary">Take me home</Link>
     </div>
   );
 }
@@ -23,7 +26,7 @@ function Loading() {
   return (
     <div className="route-loading" role="status" aria-live="polite">
       <span className="route-loading__spinner" aria-hidden="true" />
-      Loading…
+      Warming up the editor…
     </div>
   );
 }

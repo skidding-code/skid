@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
 import { getLesson, neighbors } from "../curriculum";
-import { isWebFiles, type WebFiles } from "../curriculum/types";
+import { isWebFiles, isRemoteTrack, type Track, type WebFiles } from "../curriculum/types";
 import { useProgress } from "../store/progress";
 import { pythonRunner } from "../runtime/pyodideRunner";
+import { runRemote } from "../runtime/remoteRunner";
 import { evalSourceRules, type RuleResult } from "../runtime/checker";
 import { combinedSource, isDomRule } from "../runtime/webBundle";
 import { Editor, type EditorLang } from "../components/Editor";
@@ -31,16 +32,26 @@ function LessonInner({ flId }: { flId: string }) {
 
   const { saveCode, getSaved, markComplete, isComplete, resetLesson } = useProgress();
 
+  const isWeb = lesson.track === "web";
   const isPython = lesson.track === "python";
+  const isRemote = isRemoteTrack(lesson.track);
+  // For single-file code tracks, which CodeMirror grammar + file name to show.
+  const codeLang = lesson.track as Track; // EditorLang is a superset of these
+  const codeFileName =
+    lesson.track === "python" ? "main.py"
+    : lesson.track === "java" ? "Main.java"
+    : lesson.track === "rust" ? "main.rs"
+    : lesson.track === "swift" ? "main.swift"
+    : "main";
 
   // ── editor state ──────────────────────────────────────────────────────────
   const [pyCode, setPyCode] = useState<string>(() => {
     const saved = getSaved(lesson.id);
-    if (saved !== undefined && isPython) return saved;
+    if (saved !== undefined && !isWeb) return saved;
     return isWebFiles(lesson.starter) ? "" : lesson.starter;
   });
   const [web, setWeb] = useState<WebFiles>(() => {
-    if (!isPython && isWebFiles(lesson.starter)) {
+    if (isWeb && isWebFiles(lesson.starter)) {
       const saved = getSaved(lesson.id);
       if (saved) {
         try {
@@ -75,11 +86,11 @@ function LessonInner({ flId }: { flId: string }) {
 
   // Persist edits (lightweight; store is localStorage-backed).
   useEffect(() => {
-    if (isPython) saveCode(lesson.id, pyCode);
-  }, [pyCode, isPython, lesson.id, saveCode]);
+    if (!isWeb) saveCode(lesson.id, pyCode);
+  }, [pyCode, isWeb, lesson.id, saveCode]);
   useEffect(() => {
-    if (!isPython) saveCode(lesson.id, JSON.stringify(web));
-  }, [web, isPython, lesson.id, saveCode]);
+    if (isWeb) saveCode(lesson.id, JSON.stringify(web));
+  }, [web, isWeb, lesson.id, saveCode]);
 
   // Warm up the Python runtime as soon as a Python lesson opens.
   useEffect(() => {
@@ -108,8 +119,8 @@ function LessonInner({ flId }: { flId: string }) {
     [isComplete, markComplete, lesson.id],
   );
 
-  // ── Python run ──────────────────────────────────────────────────────────────
-  const runPython = useCallback(async () => {
+  // ── Single-file code run (Python locally; Swift/Java/Rust on the hosted runner) ──
+  const runCode = useCallback(async () => {
     setRunning(true);
     setCelebrate(false);
     setMood("thinking");
@@ -117,29 +128,38 @@ function LessonInner({ flId }: { flId: string }) {
     setStatus("");
     consoleTextRef.current = "";
 
-    if (!pythonRunner.isReady) {
-      setOutput([{ tone: "meta", text: "Starting Python… (first run downloads the runtime)" }]);
+    if (isPython) {
+      if (!pythonRunner.isReady) {
+        setOutput([{ tone: "meta", text: "Starting Python… (first run downloads the runtime)" }]);
+      }
+      const res = await pythonRunner.run(pyCode, {
+        onStatus: (d) => setStatus(d),
+        onStdout: (t) => {
+          consoleTextRef.current += t;
+          setOutput((o) => [...o, { tone: "out", text: t.replace(/\n$/, "") }]);
+        },
+        onStderr: (t) => {
+          consoleTextRef.current += t;
+          setOutput((o) => [...o, { tone: "err", text: t.replace(/\n$/, "") }]);
+        },
+      });
+      if (!res.ok && res.error) setOutput((o) => [...o, { tone: "err", text: res.error! }]);
+    } else {
+      // Remote compile + run (Swift / Java / Rust).
+      setOutput([{ tone: "meta", text: `Compiling ${course.title} on the hosted runner…` }]);
+      const res = await runRemote(lesson.track, pyCode);
+      consoleTextRef.current = res.stdout;
+      const lines: OutputLine[] = [];
+      if (res.stdout) lines.push(...res.stdout.replace(/\n$/, "").split("\n").map((t) => ({ tone: "out" as const, text: t })));
+      if (res.stderr) lines.push(...res.stderr.replace(/\n$/, "").split("\n").map((t) => ({ tone: "err" as const, text: t })));
+      if (res.serviceError && res.error) lines.push({ tone: "meta", text: res.error });
+      setOutput(lines.length ? lines : [{ tone: "meta", text: "(no output)" }]);
     }
 
-    const res = await pythonRunner.run(pyCode, {
-      onStatus: (d) => setStatus(d),
-      onStdout: (t) => {
-        consoleTextRef.current += t;
-        setOutput((o) => [...o, { tone: "out", text: t.replace(/\n$/, "") }]);
-      },
-      onStderr: (t) => {
-        consoleTextRef.current += t;
-        setOutput((o) => [...o, { tone: "err", text: t.replace(/\n$/, "") }]);
-      },
-    });
-
-    if (!res.ok && res.error) {
-      setOutput((o) => [...o, { tone: "err", text: res.error! }]);
-    }
     setStatus("");
     const rr = evalSourceRules(lesson.checks, { stdout: consoleTextRef.current, code: pyCode });
     finalize(rr);
-  }, [pyCode, lesson.checks, finalize]);
+  }, [pyCode, lesson.checks, lesson.track, isPython, course.title, finalize]);
 
   // ── Web run ────────────────────────────────────────────────────────────────
   const onConsole = useCallback((e: ConsoleEntry) => {
@@ -177,7 +197,7 @@ function LessonInner({ flId }: { flId: string }) {
     setRunNonce((n) => n + 1);
   }, []);
 
-  const run = isPython ? runPython : runWeb;
+  const run = isWeb ? runWeb : runCode;
 
   // Keyboard: Cmd/Ctrl+Enter to run.
   useEffect(() => {
@@ -192,7 +212,7 @@ function LessonInner({ flId }: { flId: string }) {
   }, [run]);
 
   const onReset = () => {
-    if (isPython) setPyCode(isWebFiles(lesson.starter) ? "" : lesson.starter);
+    if (!isWeb) setPyCode(isWebFiles(lesson.starter) ? "" : lesson.starter);
     else if (isWebFiles(lesson.starter)) setWeb({ ...lesson.starter });
     setOutput([]);
     setResults([]);
@@ -204,8 +224,8 @@ function LessonInner({ flId }: { flId: string }) {
 
   const revealSolution = () => {
     setSolutionOpen(true);
-    if (isPython && !isWebFiles(lesson.solution)) setPyCode(lesson.solution);
-    else if (!isPython && isWebFiles(lesson.solution)) setWeb({ ...lesson.solution });
+    if (!isWeb && !isWebFiles(lesson.solution)) setPyCode(lesson.solution);
+    else if (isWeb && isWebFiles(lesson.solution)) setWeb({ ...lesson.solution });
   };
 
   const allPass = evaluated && results.length > 0 && results.every((r) => r.passed);
@@ -306,8 +326,8 @@ function LessonInner({ flId }: { flId: string }) {
         {/* workspace panel */}
         <main className="lesson__work">
           <div className="workbar">
-            {isPython ? (
-              <span className="workbar__file">main.py</span>
+            {!isWeb ? (
+              <span className="workbar__file">{codeFileName}</span>
             ) : (
               <div className="filetabs">
                 {(["html", "css", "js"] as WebTab[]).map((t) => (
@@ -328,8 +348,8 @@ function LessonInner({ flId }: { flId: string }) {
           </div>
 
           <div className="editor-wrap">
-            {isPython ? (
-              <Editor value={pyCode} language="python" onChange={setPyCode} ariaLabel="Python code editor" />
+            {!isWeb ? (
+              <Editor value={pyCode} language={codeLang as EditorLang} onChange={setPyCode} ariaLabel={`${course.title} code editor`} />
             ) : (
               <Editor
                 value={web[webTab === "js" ? "js" : webTab]}
@@ -342,7 +362,7 @@ function LessonInner({ flId }: { flId: string }) {
 
           <div className="results">
             <div className="results__tabs">
-              {!isPython && (
+              {isWeb && (
                 <button
                   className={`results__tab ${resultTab === "preview" ? "is-active" : ""}`}
                   onClick={() => setResultTab("preview")}
@@ -351,7 +371,7 @@ function LessonInner({ flId }: { flId: string }) {
                 </button>
               )}
               <button
-                className={`results__tab ${isPython || resultTab === "console" ? "is-active" : ""}`}
+                className={`results__tab ${!isWeb || resultTab === "console" ? "is-active" : ""}`}
                 onClick={() => setResultTab("console")}
               >
                 Console
@@ -364,7 +384,7 @@ function LessonInner({ flId }: { flId: string }) {
             </div>
 
             <div className="results__body">
-              {!isPython && (
+              {isWeb && (
                 <div style={{ display: resultTab === "preview" ? "block" : "none", height: "100%" }}>
                   <Preview
                     files={web}
@@ -375,14 +395,16 @@ function LessonInner({ flId }: { flId: string }) {
                   />
                 </div>
               )}
-              {(isPython || resultTab === "console") && (
+              {(!isWeb || resultTab === "console") && (
                 <Console
                   lines={output}
                   running={running}
                   emptyHint={
                     isPython
                       ? "Press Run to execute your Python."
-                      : "console.log(...) output shows up here."
+                      : isRemote
+                        ? `Press Run to compile & run on the hosted ${course.title} runner.`
+                        : "console.log(...) output shows up here."
                   }
                 />
               )}

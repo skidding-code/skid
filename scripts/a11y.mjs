@@ -10,8 +10,10 @@ const BASE = process.env.BASE_URL || "http://localhost:4173";
 const PAGES = [
   { name: "Home", path: "/" },
   { name: "Course (Python)", path: "/learn/python" },
+  { name: "Course (Rust)", path: "/learn/rust" },
   { name: "Lesson (Python)", path: "/lesson/py-hello", wait: ".cm-editor" },
   { name: "Lesson (Web)", path: "/lesson/web-about-me", wait: ".cm-editor" },
+  { name: "Lesson (Java)", path: "/lesson/java-hello", wait: ".cm-editor" },
   { name: "Sandbox", path: "/sandbox", wait: ".cm-editor" },
 ];
 

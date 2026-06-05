@@ -8,7 +8,7 @@ setup, no account, works on any device.
 
 ## What it is
 
-- **Two full courses — 72 lessons across 24 chapters:**
+- **Five languages — 99 lessons:**
   - 🐍 **Python** (13 chapters, 39 lessons) — printing, variables, decisions,
     loops, lists, functions, strings, dictionaries, error handling, classes,
     modules & randomness, capstone mini-projects (FizzBuzz, times tables, a
@@ -17,6 +17,20 @@ setup, no account, works on any device.
     CSS styling, flexbox layout, JavaScript, forms, events, animations, capstone
     mini-apps (click counter, color changer, mood board), a full personal
     homepage, and responsive design.
+  - 🐦 **Swift**, ☕ **Java**, 🦀 **Rust** (3 chapters / 9 lessons each) —
+    basics, control flow & collections, and functions/methods/structs.
+
+## How code runs
+
+- **Python** runs in your browser via Pyodide (WebAssembly), bundled locally so
+  it works **offline**.
+- **Web** (HTML/CSS/JS) renders live in a sandboxed iframe — also offline.
+- **Swift, Java, Rust** have no in-browser compiler, so they compile and run on
+  a **hosted runner** ([Wandbox](https://wandbox.org)) — this needs an internet
+  connection. Java and Rust are verified end-to-end against the real compilers
+  (`npm run verify:remote`). Swift uses the same path, but free Swift containers
+  are frequently down on the host side; when that happens the app says so and
+  invites a retry rather than pretending it ran.
 - **Real execution.** Python runs in your browser via
   [Pyodide](https://pyodide.org/) (WebAssembly) in a Web Worker, so a runaway
   loop never freezes the UI. Web lessons render in a sandboxed live preview with
@@ -53,6 +67,10 @@ all of it on every push:
   network cut, from the service-worker cache.
 - **Accessibility** (`npm run a11y`) — axe-core scan of every screen; the build
   is kept free of serious/critical WCAG 2.1 AA violations.
+- **Hosted compilers** (`npm run verify:remote`, scoped to `TRACKS=java,rust` in
+  CI) — compiles & runs every Swift/Java/Rust lesson's solution on the real
+  compiler and asserts the grader passes. (Browsers can't reach the runner from
+  the build container, but Node can — so these are verified server-side.)
 
 ```bash
 npm run build && npm run preview &   # serve dist on :4173

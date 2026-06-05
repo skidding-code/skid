@@ -27,6 +27,18 @@ export function Preview({ files, runNonce, domRules, onConsole, onDomResults }: 
   // Snapshot the rules for the run that is currently loading.
   const pendingRules = useRef<CheckRule[]>([]);
 
+  // Latest props kept in refs so the message listener can be subscribed ONCE.
+  // Re-subscribing on every prop change (the callbacks change as the learner
+  // types) opened a window where an iframe message could land between
+  // removeEventListener and addEventListener and be lost — which dropped
+  // console output and made console-based checks flaky.
+  const onConsoleRef = useRef(onConsole);
+  const onDomResultsRef = useRef(onDomResults);
+  const runNonceRef = useRef(runNonce);
+  onConsoleRef.current = onConsole;
+  onDomResultsRef.current = onDomResults;
+  runNonceRef.current = runNonce;
+
   // (Re)build the document on each run.
   useEffect(() => {
     if (runNonce === 0) return;
@@ -42,28 +54,27 @@ export function Preview({ files, runNonce, domRules, onConsole, onDomResults }: 
       const m = e.data;
       if (!m || typeof m !== "object") return;
       if (m.type === "pg-console") {
-        onConsole({ level: m.level, text: m.text });
+        onConsoleRef.current({ level: m.level, text: m.text });
       } else if (m.type === "pg-ready") {
         const rules = pendingRules.current;
         if (rules.length) {
           iframeRef.current?.contentWindow?.postMessage(
-            { type: "pg-validate", id: runNonce, rules },
+            { type: "pg-validate", id: runNonceRef.current, rules },
             "*",
           );
         } else {
-          onDomResults([]);
+          onDomResultsRef.current([]);
         }
       } else if (m.type === "pg-validate-result") {
         // Ignore results from a superseded run (e.g. Run clicked twice fast) so
         // stale DOM verdicts can't grade the current code.
-        if (m.id !== runNonce) return;
-        onDomResults(m.results as Array<boolean | null>);
+        if (m.id !== runNonceRef.current) return;
+        onDomResultsRef.current(m.results as Array<boolean | null>);
       }
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runNonce, onConsole, onDomResults]);
+  }, []);
 
   return (
     <iframe

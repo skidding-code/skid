@@ -7,7 +7,11 @@
  * *runner* and the *checker* interpret this data at runtime.
  */
 
-export type Track = "python" | "web";
+export type Track = "python" | "web" | "swift" | "java" | "rust";
+
+/** Tracks that compile/run on a hosted runner (no in-browser runtime). */
+export const REMOTE_TRACKS: Track[] = ["swift", "java", "rust"];
+export const isRemoteTrack = (t: Track): boolean => REMOTE_TRACKS.includes(t);
 
 /** A single block of teaching content shown above/around the editor. */
 export type Prose =
@@ -105,6 +109,6 @@ export interface Course extends CourseMeta {
 export const isWebFiles = (v: string | WebFiles): v is WebFiles =>
   typeof v === "object" && v !== null && "html" in v;
 
-export function lessonLanguage(lesson: Lesson): "python" | "web" {
-  return lesson.track === "python" ? "python" : "web";
+export function lessonLanguage(lesson: Lesson): Track {
+  return lesson.track;
 }

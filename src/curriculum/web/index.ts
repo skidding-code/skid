@@ -14,7 +14,7 @@ import { ch11 } from "./ch11";
 export const webCourse: Course = {
   track: "web",
   title: "Web",
-  tagline: "Build real pages and apps the whole world can open — HTML, CSS & JavaScript.",
+  tagline: "HTML, CSS & JavaScript — the trio behind every site you've ever procrastinated on. Build real pages, live.",
   glyph: "🌐",
   accent: ["#f97316", "#ec4899"],
   chapters: [ch01, ch02, ch03, ch04, ch05, ch06, ch07, ch08, ch09, ch10, ch11],

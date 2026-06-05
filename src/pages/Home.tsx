@@ -19,14 +19,16 @@ export function Home() {
     <div className="home">
       <section className="hero">
         <div className="hero__text">
-          <div className="hero__eyebrow">Learn to code · by doing</div>
+          <div className="hero__eyebrow">Learn to code · by actually doing it</div>
           <h1 className="hero__title">
             Write real code,<br />
             <span className="hero__title-grad">watch it come alive.</span>
           </h1>
           <p className="hero__sub">
-            A hands-on way to learn <strong>Python</strong> and the <strong>web</strong>.
-            Every lesson runs for real — right here, no setup, on any device.
+            Learn <strong>Python</strong>, <strong>JavaScript</strong>, <strong>Swift</strong>,{" "}
+            <strong>Java</strong> &amp; <strong>Rust</strong> by running code yourself — not by
+            watching someone else do it. No setup, no "works on my machine," no tears.
+            (Okay, maybe happy ones.)
           </p>
           <div className="hero__cta">
             <Link to="/learn/python" className="btn btn--primary btn--lg">Start with Python →</Link>
@@ -62,7 +64,7 @@ export function Home() {
       )}
 
       <section className="tracks">
-        <h2 className="section-title">Pick a path</h2>
+        <h2 className="section-title">Pick your language</h2>
         <div className="tracks__grid">
           {courses.map((c) => {
             const list = trackLessons(c.track);
@@ -106,10 +108,10 @@ export function Home() {
             </div>
             <h3 className="course-card__title">Sandbox</h3>
             <p className="course-card__tag">
-              A blank canvas. Write and run Python or web code freely — no goals, just play.
+              A blank canvas with zero rules and zero judgment. Write and run Python or web code just to see what happens.
             </p>
             <div className="course-card__meta">
-              <span className="course-card__go">Open the sandbox →</span>
+              <span className="course-card__go">Mess around →</span>
             </div>
           </Link>
         </div>
@@ -118,17 +120,17 @@ export function Home() {
       <section className="why">
         <h2 className="section-title">Why it sticks</h2>
         <div className="why__grid">
-          <Feature glyph="⚡" title="Runs instantly">
-            Python runs in your browser through WebAssembly. Web pages render live as you build them. Nothing to install.
+          <Feature glyph="⚡" title="It actually runs">
+            Python and web run right in your browser; Swift, Java &amp; Rust compile on a hosted runner. Real output, not "trust me, it works."
           </Feature>
-          <Feature glyph="🎯" title="Real goals">
-            Each lesson checks your actual output and code, so you always know when you've truly got it.
+          <Feature glyph="🎯" title="Checks that mean it">
+            Each lesson inspects your real output and code. The little circles only go green when you've genuinely nailed it — no participation trophies.
           </Feature>
-          <Feature glyph="📱" title="Works everywhere">
-            Install it as an app on your phone, tablet, or computer. Your progress is saved on your device.
+          <Feature glyph="📱" title="Runs on basically anything">
+            Phone, tablet, laptop, that suspicious computer in the garage. Install it like an app; your progress tags along.
           </Feature>
-          <Feature glyph="🧭" title="Gentle on-ramp">
-            Start from "Hello, world!" and grow into loops, functions, and interactive apps — one small win at a time.
+          <Feature glyph="🧭" title="Starts from absolute zero">
+            We begin at "Hello, world!" and sneak up on loops, functions, and tiny apps before you notice you've become a programmer.
           </Feature>
         </div>
       </section>

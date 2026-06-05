@@ -1,8 +1,13 @@
 import type { Course, Chapter, Lesson, Track } from "./types";
 import { pythonCourse } from "./python";
 import { webCourse } from "./web";
+import { swiftCourse } from "./swift";
+import { javaCourse } from "./java";
+import { rustCourse } from "./rust";
 
-export const courses: Course[] = [pythonCourse, webCourse];
+export const courses: Course[] = [pythonCourse, webCourse, swiftCourse, javaCourse, rustCourse]
+  // Hide any course that has no chapters yet (keeps the UI tidy if a track is WIP).
+  .filter((c) => c.chapters.length > 0);
 
 export function getCourse(track: Track): Course {
   const c = courses.find((c) => c.track === track);
@@ -18,11 +23,6 @@ export interface FlatLesson {
   index: number; // position within the whole track
 }
 
-const flatByTrack: Record<Track, FlatLesson[]> = {
-  python: flatten(pythonCourse),
-  web: flatten(webCourse),
-};
-
 function flatten(course: Course): FlatLesson[] {
   const out: FlatLesson[] = [];
   let i = 0;
@@ -34,13 +34,16 @@ function flatten(course: Course): FlatLesson[] {
   return out;
 }
 
-export function trackLessons(track: Track): FlatLesson[] {
-  return flatByTrack[track];
+const flatByTrack = new Map<Track, FlatLesson[]>();
+const lessonIndex = new Map<string, FlatLesson>();
+for (const course of courses) {
+  const flat = flatten(course);
+  flatByTrack.set(course.track, flat);
+  for (const fl of flat) lessonIndex.set(fl.lesson.id, fl);
 }
 
-const lessonIndex: Map<string, FlatLesson> = new Map();
-for (const track of Object.keys(flatByTrack) as Track[]) {
-  for (const fl of flatByTrack[track]) lessonIndex.set(fl.lesson.id, fl);
+export function trackLessons(track: Track): FlatLesson[] {
+  return flatByTrack.get(track) ?? [];
 }
 
 export function getLesson(id: string): FlatLesson | undefined {
@@ -50,7 +53,7 @@ export function getLesson(id: string): FlatLesson | undefined {
 export function neighbors(id: string): { prev?: Lesson; next?: Lesson } {
   const fl = lessonIndex.get(id);
   if (!fl) return {};
-  const list = flatByTrack[fl.lesson.track];
+  const list = trackLessons(fl.lesson.track);
   return {
     prev: list[fl.index - 1]?.lesson,
     next: list[fl.index + 1]?.lesson,
@@ -58,8 +61,7 @@ export function neighbors(id: string): { prev?: Lesson; next?: Lesson } {
 }
 
 export function courseStats(track: Track) {
-  const list = trackLessons(track);
-  return { total: list.length };
+  return { total: trackLessons(track).length };
 }
 
 /** The first lesson in a track the learner hasn't completed yet — i.e. where to

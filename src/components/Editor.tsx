@@ -4,11 +4,15 @@ import { python } from "@codemirror/lang-python";
 import { html } from "@codemirror/lang-html";
 import { css as cssLang } from "@codemirror/lang-css";
 import { javascript } from "@codemirror/lang-javascript";
+import { java } from "@codemirror/lang-java";
+import { rust } from "@codemirror/lang-rust";
+import { StreamLanguage } from "@codemirror/language";
+import { swift } from "@codemirror/legacy-modes/mode/swift";
 import { EditorView } from "@codemirror/view";
 import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
 import { useResolvedTheme } from "../hooks/useTheme";
 
-export type EditorLang = "python" | "html" | "css" | "javascript";
+export type EditorLang = "python" | "html" | "css" | "javascript" | "java" | "rust" | "swift";
 
 interface EditorProps {
   value: string;
@@ -28,6 +32,12 @@ const langExtension = (l: EditorLang) => {
       return cssLang();
     case "javascript":
       return javascript();
+    case "java":
+      return java();
+    case "rust":
+      return rust();
+    case "swift":
+      return StreamLanguage.define(swift);
   }
 };
 
@@ -47,6 +57,10 @@ export function Editor({ value, language, onChange, readOnly, ariaLabel }: Edito
         ".cm-gutters": { background: "transparent", border: "none" },
         ".cm-scroller": { lineHeight: "1.7" },
         "&.cm-focused": { outline: "none" },
+        // Keep the active-line tint off the text background so syntax tokens
+        // always sit on the theme's AA-correct base colour (axe: color-contrast).
+        ".cm-activeLine": { backgroundColor: "transparent" },
+        ".cm-activeLineGutter": { backgroundColor: "transparent" },
       }),
     ],
     [language, ariaLabel],

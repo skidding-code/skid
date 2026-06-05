@@ -16,7 +16,7 @@ import { ch13 } from "./ch13";
 export const pythonCourse: Course = {
   track: "python",
   title: "Python",
-  tagline: "A friendly first language. Talk to the computer, teach it to think.",
+  tagline: "The friendly one. Reads almost like English, runs in your browser, and judges you never.",
   glyph: "🐍",
   accent: ["#3b82f6", "#22c55e"],
   chapters: [ch01, ch02, ch03, ch04, ch05, ch06, ch07, ch08, ch09, ch10, ch11, ch12, ch13],
