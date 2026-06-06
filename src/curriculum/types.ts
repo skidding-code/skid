@@ -7,10 +7,20 @@
  * *runner* and the *checker* interpret this data at runtime.
  */
 
-export type Track = "python" | "web" | "swift" | "java" | "rust";
+export type Track =
+  | "python"
+  | "web"
+  | "swift"
+  | "java"
+  | "rust"
+  | "node"
+  | "bash"
+  | "discordpy"
+  | "mcmods"
+  | "swiftui";
 
-/** Tracks that compile/run on a hosted runner (no in-browser runtime). */
-export const REMOTE_TRACKS: Track[] = ["swift", "java", "rust"];
+/** Tracks that compile/run on a hosted runner (Wandbox / Compiler Explorer). */
+export const REMOTE_TRACKS: Track[] = ["swift", "java", "rust", "bash"];
 export const isRemoteTrack = (t: Track): boolean => REMOTE_TRACKS.includes(t);
 
 /** A single block of teaching content shown above/around the editor. */

@@ -18,6 +18,10 @@ const PAGES = [
   { name: "Progress", path: "/progress", wait: ".profile-hero" },
   { name: "Placement", path: "/placement", wait: ".pickcard" },
   { name: "Plan (empty)", path: "/plan", wait: ".plan-empty" },
+  { name: "Lesson (Node)", path: "/lesson/node-hello", wait: ".cm-editor" },
+  { name: "Lesson (guided)", path: "/lesson/discord-create-bot", wait: ".cm-editor" },
+  { name: "Account", path: "/account", wait: ".account__card" },
+  { name: "Leaderboard", path: "/leaderboard", wait: ".lb-head, .account__card" },
 ];
 
 const browser = await chromium.launch();

@@ -16,3 +16,8 @@ AGENT_SPEC.md
 *.tsbuildinfo
 
 AGENT_SPEC_REMOTE.md
+
+# accounts server database
+server/data.db
+server/data.db-*
+playground-token

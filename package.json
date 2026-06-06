@@ -16,7 +16,9 @@
     "e2e": "node scripts/e2e.mjs",
     "e2e:offline": "node scripts/offline.mjs",
     "a11y": "node scripts/a11y.mjs",
-    "verify:remote": "tsx scripts/verify-remote.ts"
+    "verify:remote": "tsx scripts/verify-remote.ts",
+    "server": "node server/index.mjs",
+    "start": "npm run build && node server/index.mjs"
   },
   "dependencies": {
     "@codemirror/lang-css": "^6.3.1",
@@ -35,6 +37,10 @@
     "@fontsource/space-grotesk": "^5.2.10",
     "@uiw/codemirror-theme-github": "^4.25.10",
     "@uiw/react-codemirror": "^4.25.10",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.22.2",
+    "jsonwebtoken": "^9.0.3",
     "pyodide": "^0.26.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

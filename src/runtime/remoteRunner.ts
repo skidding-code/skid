@@ -88,6 +88,7 @@ const WANDBOX_LANG: Partial<Record<Track, string>> = {
   swift: "Swift",
   java: "Java",
   rust: "Rust",
+  bash: "Bash script",
 };
 
 export interface RemoteRunResult {

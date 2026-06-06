@@ -24,8 +24,9 @@ export function PlacementPage() {
   const queue = useMemo(() => {
     const q: { track: Track; qi: number }[] = [];
     for (const t of TRACK_ORDER) {
-      if (!selected.has(t)) continue;
-      PLACEMENT[t].forEach((_, qi) => q.push({ track: t, qi }));
+      const qs = PLACEMENT[t];
+      if (!selected.has(t) || !qs) continue;
+      qs.forEach((_, qi) => q.push({ track: t, qi }));
     }
     return q;
   }, [selected]);
@@ -39,7 +40,7 @@ export function PlacementPage() {
 
   const start = () => {
     const init: Record<string, number[]> = {};
-    for (const t of selected) init[t] = PLACEMENT[t].map(() => -1);
+    for (const t of selected) init[t] = (PLACEMENT[t] ?? []).map(() => -1);
     setAnswers(init);
     setPos(0);
     setPhase("quiz");
@@ -78,7 +79,7 @@ export function PlacementPage() {
         </div>
         <h2 className="placement__h2">Which languages should we test?</h2>
         <div className="placement__pick">
-          {courses.map((c) => {
+          {courses.filter((c) => PLACEMENT[c.track]).map((c) => {
             const on = selected.has(c.track);
             return (
               <button
@@ -106,7 +107,7 @@ export function PlacementPage() {
 
   if (phase === "quiz") {
     const { track, qi } = queue[pos];
-    const q = PLACEMENT[track][qi];
+    const q = PLACEMENT[track]![qi];
     return (
       <div className="placement placement--quiz">
         <div className="quiz__bar">

@@ -1,9 +1,10 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import { Header } from "./components/Header";
 import { ToastHost } from "./components/ToastHost";
 import { Home } from "./pages/Home";
 import { useResolvedTheme } from "./hooks/useTheme";
+import { useAuth } from "./store/auth";
 
 // Lesson + Sandbox pull in CodeMirror and the runtimes — load them on demand so
 // the home/course screens stay light and fast.
@@ -13,6 +14,8 @@ const SandboxPage = lazy(() => import("./pages/SandboxPage").then((m) => ({ defa
 const ProgressPage = lazy(() => import("./pages/ProgressPage").then((m) => ({ default: m.ProgressPage })));
 const PlacementPage = lazy(() => import("./pages/PlacementPage").then((m) => ({ default: m.PlacementPage })));
 const PlanPage = lazy(() => import("./pages/PlanPage").then((m) => ({ default: m.PlanPage })));
+const AccountPage = lazy(() => import("./pages/AccountPage").then((m) => ({ default: m.AccountPage })));
+const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage").then((m) => ({ default: m.LeaderboardPage })));
 
 function NotFound() {
   return (
@@ -38,6 +41,10 @@ function Loading() {
 function Shell() {
   // Applies the theme to <html> and keeps it in sync app-wide.
   useResolvedTheme();
+  // Detect an accounts backend and, if signed in, pull + sync cloud progress.
+  useEffect(() => {
+    void useAuth.getState().init();
+  }, []);
   return (
     <div className="app">
       <Header />
@@ -51,6 +58,8 @@ function Shell() {
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/placement" element={<PlacementPage />} />
             <Route path="/plan" element={<PlanPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

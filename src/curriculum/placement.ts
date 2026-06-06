@@ -17,7 +17,8 @@ export interface PlacementQ {
   concept: string;
 }
 
-export const PLACEMENT: Record<Track, PlacementQ[]> = {
+/** Only the foundational languages have a placement quiz. */
+export const PLACEMENT: Partial<Record<Track, PlacementQ[]>> = {
   python: [
     { concept: "Printing", chapterId: "py-basics", answer: 1,
       prompt: "Which line prints the word Hello?",
@@ -109,7 +110,7 @@ export interface Placement {
 
 /** Given answers (index per question, -1 = skipped/blank), recommend a start. */
 export function recommend(track: Track, answers: number[]): Placement {
-  const qs = PLACEMENT[track];
+  const qs = PLACEMENT[track] ?? [];
   let correct = 0;
   let firstWrong: string | null = null;
   for (let i = 0; i < qs.length; i++) {

@@ -4,8 +4,24 @@ import { webCourse } from "./web";
 import { swiftCourse } from "./swift";
 import { javaCourse } from "./java";
 import { rustCourse } from "./rust";
+import { nodeCourse } from "./node";
+import { bashCourse } from "./bash";
+import { discordpyCourse } from "./discordpy";
+import { mcmodsCourse } from "./mcmods";
+import { swiftuiCourse } from "./swiftui";
 
-export const courses: Course[] = [pythonCourse, webCourse, swiftCourse, javaCourse, rustCourse]
+export const courses: Course[] = [
+  pythonCourse,
+  nodeCourse,
+  webCourse,
+  swiftCourse,
+  javaCourse,
+  rustCourse,
+  bashCourse,
+  discordpyCourse,
+  swiftuiCourse,
+  mcmodsCourse,
+]
   // Hide any course that has no chapters yet (keeps the UI tidy if a track is WIP).
   .filter((c) => c.chapters.length > 0);
 

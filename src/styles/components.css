@@ -637,6 +637,34 @@
 
 .settings__links { display: flex; gap: 10px; flex-wrap: wrap; }
 .toggle__hint { color: var(--text-faint); font-weight: 400; font-size: 0.85rem; }
+
+/* ── Accounts + leaderboard ──────────────────────────────────────────────── */
+.account { max-width: 480px; margin: 0 auto; padding: clamp(24px, 6vw, 60px) 16px; }
+.account__card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--r-xl); padding: clamp(22px, 5vw, 36px); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; }
+.account__card h1 { font-size: clamp(1.5rem, 4vw, 2rem); }
+.account__card p { color: var(--text-dim); line-height: 1.5; }
+.account__form { display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: left; margin-top: 6px; }
+.account__form label { display: flex; flex-direction: column; gap: 5px; font-weight: 700; font-size: 0.88rem; }
+.account__form input { padding: 11px 13px; border-radius: var(--r-md); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); font-size: 1rem; font-family: inherit; }
+.account__form input:focus-visible { outline: 2px solid var(--accent); border-color: var(--accent); }
+.account__error { background: var(--bad-bg); color: var(--bad); padding: 9px 12px; border-radius: var(--r-md); font-size: 0.9rem; font-weight: 600; }
+.account__actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.appbar__account { display: inline-flex; align-items: center; gap: 6px; }
+
+.leaderboard { max-width: 680px; margin: 0 auto; padding: clamp(20px, 4vw, 44px); }
+.lb-head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 20px; }
+.lb-head h1 { display: inline-flex; align-items: center; gap: 10px; font-size: clamp(1.6rem, 4vw, 2.2rem); }
+.lb-head p { color: var(--text-dim); }
+.lb-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.lb-row { display: grid; grid-template-columns: 44px 1fr auto auto auto; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border-soft); }
+.lb-row--me { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+.lb-rank { font-size: 1.2rem; font-weight: 800; text-align: center; }
+.lb-name { font-weight: 800; font-family: var(--font-display); overflow: hidden; text-overflow: ellipsis; }
+.lb-lvl { font-size: 0.8rem; font-weight: 700; color: var(--accent-strong); }
+.lb-xp { font-weight: 800; }
+.lb-lessons { color: var(--text-faint); font-size: 0.82rem; }
+.lb-empty { text-align: center; color: var(--text-dim); padding: 30px; }
+@media (max-width: 560px) { .lb-row { grid-template-columns: 36px 1fr auto; } .lb-lvl, .lb-lessons { display: none; } }
 .route-loading__spinner {
   width: 22px; height: 22px; border-radius: 50%;
   border: 3px solid var(--surface-3); border-top-color: var(--accent);

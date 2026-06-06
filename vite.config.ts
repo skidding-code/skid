@@ -57,8 +57,14 @@ export default defineConfig({
         // install stays light.
         globPatterns: ["**/*.{js,css,html,svg,png,woff2,json}"],
         globIgnores: ["pyodide/**"],
-        navigateFallbackDenylist: [/^\/pyodide\//],
+        // Never route the accounts API or Pyodide through the navigation fallback.
+        navigateFallbackDenylist: [/^\/pyodide\//, /^\/api\//],
         runtimeCaching: [
+          {
+            // The accounts API must always hit the network (never cached/stale).
+            urlPattern: /\/api\//,
+            handler: "NetworkOnly",
+          },
           {
             // Same-origin Pyodide runtime (wasm, stdlib, lock, js): cache-first
             // so Python keeps working fully offline after the first run.

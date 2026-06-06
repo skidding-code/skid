@@ -11,6 +11,18 @@ function daysBetween(a: string, b: string): number {
   return Math.round((Date.parse(b) - Date.parse(a)) / 86_400_000);
 }
 
+/** Union two completed maps, keeping the earliest completion timestamp. */
+function mergeCompleted(
+  a: Record<string, number>,
+  b: Record<string, number>,
+): Record<string, number> {
+  const out: Record<string, number> = { ...a };
+  for (const [k, v] of Object.entries(b)) {
+    out[k] = out[k] ? Math.min(out[k], v) : v;
+  }
+  return out;
+}
+
 interface ProgressState {
   /** lessonId -> completed timestamp (ms). */
   completed: Record<string, number>;
@@ -36,7 +48,15 @@ interface ProgressState {
   setSound: (on: boolean) => void;
   setPlacement: (track: string, chapterId: string) => void;
   setPlanEnabled: (on: boolean) => void;
+  /** Merge a remote (cloud) snapshot into local progress — union, never lose. */
+  mergeRemote: (r: Partial<ProgressState>) => void;
 }
+
+/** The progress fields that sync to an account (no functions). */
+export type SyncState = Pick<
+  ProgressState,
+  "completed" | "saved" | "streak" | "lastActiveDay" | "placement" | "planEnabled"
+>;
 
 export const useProgress = create<ProgressState>()(
   persist(
@@ -87,6 +107,17 @@ export const useProgress = create<ProgressState>()(
       setPlacement: (track, chapterId) =>
         set((s) => ({ placement: { ...s.placement, [track]: chapterId } })),
       setPlanEnabled: (planEnabled) => set({ planEnabled }),
+      mergeRemote: (r) =>
+        set((s) => ({
+          // Union completed lessons, keeping the earliest timestamp for each.
+          completed: mergeCompleted(s.completed, r.completed ?? {}),
+          // Local edits win for saved code; otherwise take the remote copy.
+          saved: { ...(r.saved ?? {}), ...s.saved },
+          streak: Math.max(s.streak, r.streak ?? 0),
+          lastActiveDay: [s.lastActiveDay, r.lastActiveDay].filter(Boolean).sort().pop() ?? null,
+          placement: { ...(r.placement ?? {}), ...s.placement },
+          planEnabled: s.planEnabled || !!r.planEnabled,
+        })),
     }),
     { name: "playground-progress-v1" },
   ),

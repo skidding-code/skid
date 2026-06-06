@@ -6,6 +6,11 @@ const ACCENTS: Record<Track, [string, string]> = {
   swift: ["#f05138", "#ff8a65"],
   java: ["#e76f00", "#5382a1"],
   rust: ["#dea584", "#a33d1a"],
+  node: ["#a3b626", "#5c7a1e"],
+  bash: ["#34d399", "#065f46"],
+  discordpy: ["#5865f2", "#7c3aed"],
+  mcmods: ["#7cae42", "#4d6b2a"],
+  swiftui: ["#fb6d3a", "#0a84ff"],
 };
 
 /** White glyph drawn for each language — original, simple, geometric marks
@@ -37,11 +42,41 @@ function Glyph({ track }: { track: Track }) {
         </>
       );
     case "swift":
+    case "swiftui":
       // paper plane — speed
       return (
         <>
           <path d="M28 64 L73 36 L55 67 L47 55 Z" fill="#fff" stroke="#fff" strokeWidth={4} strokeLinejoin="round" />
           <path d="M47 55 L73 36" stroke="rgba(0,0,0,0.18)" strokeWidth={3} strokeLinecap="round" />
+        </>
+      );
+    case "node":
+      // hexagon (Node)
+      return <path d="M50 24 L73 37 V63 L50 76 L27 63 V37 Z" {...stroke} />;
+    case "bash":
+      // terminal prompt  >_
+      return (
+        <>
+          <path d="M33 40 L46 50 L33 60" {...stroke} />
+          <line x1="51" y1="62" x2="68" y2="62" {...stroke} />
+        </>
+      );
+    case "discordpy":
+      // chat bubble
+      return (
+        <>
+          <path d="M30 38 H70 a6 6 0 0 1 6 6 V60 a6 6 0 0 1 -6 6 H48 L36 75 V66 H30 a6 6 0 0 1 -6 -6 V44 a6 6 0 0 1 6 -6 Z" fill="#fff" />
+          <circle cx="42" cy="52" r="3.4" fill="#5865f2" />
+          <circle cx="58" cy="52" r="3.4" fill="#5865f2" />
+        </>
+      );
+    case "mcmods":
+      // isometric cube
+      return (
+        <>
+          <path d="M50 26 L72 38 L50 50 L28 38 Z" {...stroke} />
+          <path d="M28 38 V62 L50 74 V50" {...stroke} />
+          <path d="M72 38 V62 L50 74" {...stroke} />
         </>
       );
     case "java":

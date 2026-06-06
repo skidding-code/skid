@@ -8,11 +8,12 @@ import { java } from "@codemirror/lang-java";
 import { rust } from "@codemirror/lang-rust";
 import { StreamLanguage } from "@codemirror/language";
 import { swift } from "@codemirror/legacy-modes/mode/swift";
+import { shell } from "@codemirror/legacy-modes/mode/shell";
 import { EditorView } from "@codemirror/view";
 import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
 import { useResolvedTheme } from "../hooks/useTheme";
 
-export type EditorLang = "python" | "html" | "css" | "javascript" | "java" | "rust" | "swift";
+export type EditorLang = "python" | "html" | "css" | "javascript" | "java" | "rust" | "swift" | "bash";
 
 interface EditorProps {
   value: string;
@@ -38,6 +39,8 @@ const langExtension = (l: EditorLang) => {
       return rust();
     case "swift":
       return StreamLanguage.define(swift);
+    case "bash":
+      return StreamLanguage.define(shell);
   }
 };
 

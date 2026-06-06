@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useProgress, type ThemeMode } from "../store/progress";
 import { xpFromCompleted, levelInfo } from "../game/xp";
 import { useInstallPrompt } from "../hooks/useInstallPrompt";
+import { useAuth } from "../store/auth";
 import { Icon, type IconName } from "./Icon";
 
 const order: ThemeMode[] = ["system", "light", "dark"];
@@ -10,6 +11,7 @@ const themeIcon: Record<ThemeMode, IconName> = { system: "monitor", light: "sun"
 export function Header() {
   const { theme, setTheme, completed, streak } = useProgress();
   const { canInstall, promptInstall } = useInstallPrompt();
+  const { username, hasBackend } = useAuth();
   const loc = useLocation();
   const isLesson = loc.pathname.startsWith("/lesson/");
 
@@ -40,6 +42,11 @@ export function Header() {
         )}
         <Link to="/sandbox" className="appbar__link appbar__link--hide-sm">Sandbox</Link>
         <Link to="/progress" className="appbar__link appbar__link--hide-sm">Progress</Link>
+        {hasBackend && (
+          <Link to="/account" className="appbar__link appbar__account">
+            <Icon name="trophy" size={15} /> {username ?? "Sign in"}
+          </Link>
+        )}
         {canInstall && (
           <button className="appbar__link appbar__install" onClick={() => void promptInstall()} title="Install Playground as an app">
             <Icon name="download" size={16} /> Install

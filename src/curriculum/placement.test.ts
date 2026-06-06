@@ -3,11 +3,12 @@ import { PLACEMENT, recommend } from "./placement";
 import type { Track } from "./types";
 
 const tracks = Object.keys(PLACEMENT) as Track[];
+const qsOf = (t: Track) => PLACEMENT[t] ?? [];
 
 describe("placement question bank", () => {
   it("every question has a valid answer index and a chapter to start at", () => {
     for (const t of tracks) {
-      for (const q of PLACEMENT[t]) {
+      for (const q of qsOf(t)) {
         expect(q.answer).toBeGreaterThanOrEqual(0);
         expect(q.answer).toBeLessThan(q.options.length);
         expect(q.chapterId).toMatch(/^[a-z]+-/);
@@ -16,7 +17,7 @@ describe("placement question bank", () => {
   });
 
   it("correct answers are not always the same index (real test, not a pattern)", () => {
-    const idxs = tracks.flatMap((t) => PLACEMENT[t].map((q) => q.answer));
+    const idxs = tracks.flatMap((t) => qsOf(t).map((q) => q.answer));
     expect(new Set(idxs).size).toBeGreaterThan(1);
   });
 });
@@ -24,7 +25,7 @@ describe("placement question bank", () => {
 describe("recommend()", () => {
   it("aces when all answers are correct", () => {
     for (const t of tracks) {
-      const allRight = PLACEMENT[t].map((q) => q.answer);
+      const allRight = qsOf(t).map((q) => q.answer);
       const r = recommend(t, allRight);
       expect(r.aced).toBe(true);
       expect(r.chapterId).toBeNull();
@@ -34,19 +35,21 @@ describe("recommend()", () => {
 
   it("recommends the first missed chapter, not a later one", () => {
     const t: Track = "python";
-    const ans = PLACEMENT[t].map((q) => q.answer);
+    const qs = qsOf(t);
+    const ans = qs.map((q) => q.answer);
     // miss question index 2 (and also 4) → should recommend q2's chapter
-    ans[2] = (ans[2] + 1) % PLACEMENT[t][2].options.length;
-    ans[4] = (ans[4] + 1) % PLACEMENT[t][4].options.length;
+    ans[2] = (ans[2] + 1) % qs[2].options.length;
+    ans[4] = (ans[4] + 1) % qs[4].options.length;
     const r = recommend(t, ans);
     expect(r.aced).toBe(false);
-    expect(r.chapterId).toBe(PLACEMENT[t][2].chapterId);
+    expect(r.chapterId).toBe(qs[2].chapterId);
   });
 
   it("recommends chapter 1 when the first question is missed", () => {
     const t: Track = "rust";
-    const ans = PLACEMENT[t].map((q) => q.answer);
-    ans[0] = (ans[0] + 1) % PLACEMENT[t][0].options.length;
-    expect(recommend(t, ans).chapterId).toBe(PLACEMENT[t][0].chapterId);
+    const qs = qsOf(t);
+    const ans = qs.map((q) => q.answer);
+    ans[0] = (ans[0] + 1) % qs[0].options.length;
+    expect(recommend(t, ans).chapterId).toBe(qs[0].chapterId);
   });
 });

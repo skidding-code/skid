@@ -9,19 +9,19 @@ streak, and unlock badges as you go.
 
 ## What it is
 
-- **Five languages — 108 lessons:**
-  - 🐍 **Python** (13 chapters, 39 lessons) — printing, variables, decisions,
-    loops, lists, functions, strings, dictionaries, error handling, classes,
-    modules & randomness, capstone mini-projects (FizzBuzz, times tables, a
-    scoreboard), and comprehensions & tuples.
-  - 🌐 **Web** (11 chapters, 33 lessons) — your first page, links/lists/images,
-    CSS styling, flexbox layout, JavaScript, forms, events, animations, capstone
-    mini-apps (click counter, color changer, mood board), a full personal
-    homepage, and responsive design.
-  - 🐦 **Swift**, ☕ **Java**, 🦀 **Rust** (4 chapters / 12 lessons each) —
-    basics, control flow & collections, functions/methods/structs, plus a
-    signature chapter each (Rust `match` & `Option`, Java lists & maps, Swift
-    optionals & dictionaries).
+- **Ten tracks — 153 lessons:**
+  - 🐍 **Python** (39 lessons) — through comprehensions, classes & capstones.
+  - 🟨 **JavaScript / Node** (9) — runs **live in the browser**.
+  - 🌐 **Web** (33 lessons) — HTML/CSS/JS through a full responsive homepage.
+  - 🐦 **Swift**, ☕ **Java**, 🦀 **Rust** (12 each) — through collections,
+    `match`/`Option`, lists & maps; compiled on real hosted compilers.
+  - 💻 **Terminal / Bash** (9) — echo, variables, loops, pipes (hosted runner).
+  - 🤖 **Discord Bots** (Python), 🧱 **Minecraft Mods** (Java Forge), 📱
+    **SwiftUI** (iOS/macOS) — **guided, code-checked** applied tracks (these need
+    a real toolchain to run, so we teach + verify the code you write).
+- **Placement test** to find your level, and an optional personal **plan**.
+- **Optional accounts** (self-hosted server): sign in, sync progress across
+  devices, and a **leaderboard**. The app works fully without them.
 
 - **Learning is a game:** every lesson grants XP toward leveling up (with playful
   titles), a daily **streak** keeps you coming back, and **12 badges** unlock as
@@ -70,6 +70,23 @@ ALLOWED_HOSTS=all npm run preview -- --port 4173 --host
 
 Serve over **HTTPS** so the service worker registers (needed for install +
 offline). The app itself runs fine over plain HTTP too.
+
+## Accounts (optional)
+
+The app is local-first — progress lives in `localStorage` and needs no account.
+To add **sign-in, cross-device progress sync, and a leaderboard**, run the
+bundled server (one process serves the app *and* the API, so there's no CORS):
+
+```bash
+npm run build
+JWT_SECRET="$(openssl rand -hex 32)" PORT=8787 npm run server
+# → http://localhost:8787   (app + /api, SQLite at server/data.db)
+```
+
+Endpoints: `POST /api/auth/{signup,login}`, `GET/PUT /api/progress` (JWT),
+`GET /api/leaderboard`. Passwords are bcrypt-hashed; the API is never cached by
+the service worker. Point your reverse proxy at this server instead of a static
+host. Without the server, the account/leaderboard UI simply doesn't appear.
 
 ## How code runs
 

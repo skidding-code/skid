@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
 import { getLesson, neighbors } from "../curriculum";
-import { isWebFiles, isRemoteTrack, type Track, type WebFiles } from "../curriculum/types";
+import { isWebFiles, type WebFiles } from "../curriculum/types";
 import { useProgress } from "../store/progress";
 import { useToasts } from "../store/toasts";
 import { pythonRunner } from "../runtime/pyodideRunner";
 import { runRemote } from "../runtime/remoteRunner";
 import { evalSourceRules, type RuleResult } from "../runtime/checker";
 import { combinedSource, isDomRule } from "../runtime/webBundle";
+import { trackConfig } from "../runtime/tracks";
 import { XP_PER_LESSON, xpFromCompleted, levelInfo, levelTitle } from "../game/xp";
 import { buildBadgeContext, earnedBadgeIds, badgeById } from "../game/badges";
 import { playSuccess, playLevelUp, playBadge } from "../game/sound";
@@ -40,16 +41,13 @@ function LessonInner({ flId }: { flId: string }) {
   const pushToast = useToasts((s) => s.push);
 
   const isWeb = lesson.track === "web";
-  const isPython = lesson.track === "python";
-  const isRemote = isRemoteTrack(lesson.track);
-  // For single-file code tracks, which CodeMirror grammar + file name to show.
-  const codeLang = lesson.track as Track; // EditorLang is a superset of these
-  const codeFileName =
-    lesson.track === "python" ? "main.py"
-    : lesson.track === "java" ? "Main.java"
-    : lesson.track === "rust" ? "main.rs"
-    : lesson.track === "swift" ? "main.swift"
-    : "main";
+  const cfg = !isWeb ? trackConfig(lesson.track) : null;
+  const isPython = cfg?.exec === "python";
+  const isRemote = cfg?.exec === "wandbox" || cfg?.exec === "godbolt";
+  const isNode = cfg?.exec === "iframe"; // single-file JS run in the sandbox iframe
+  const isGuided = cfg?.runnable === false; // code-checked, no live execution
+  const codeLang = (cfg?.lang ?? "python") as EditorLang;
+  const codeFileName = cfg?.fileName ?? "main";
 
   // ── editor state ──────────────────────────────────────────────────────────
   const [pyCode, setPyCode] = useState<string>(() => {
@@ -204,10 +202,12 @@ function LessonInner({ flId }: { flId: string }) {
   const onDomResults = useCallback(
     (domResults: Array<boolean | null>, consoleText?: string) => {
       // Merge: source rules evaluated here; dom rules filled from the iframe.
-      // Prefer the iframe's authoritative console buffer for stdout checks.
+      // Prefer the iframe's authoritative console buffer for stdout checks. The
+      // source for code-checks is the combined web files, or just the JS for the
+      // single-file Node track.
       const source = evalSourceRules(lesson.checks, {
         stdout: consoleText ?? consoleTextRef.current,
-        code: combinedSource(web),
+        code: isWeb ? combinedSource(web) : pyCode,
       });
       let di = 0;
       const merged: RuleResult[] = lesson.checks.map((rule, i) => {
@@ -219,8 +219,34 @@ function LessonInner({ flId }: { flId: string }) {
       });
       finalize(merged);
     },
-    [lesson.checks, web, finalize],
+    [lesson.checks, web, isWeb, pyCode, finalize],
   );
+
+  // Node (single-file JS) and Web both execute in the sandboxed iframe.
+  const iframeFiles: WebFiles = isWeb ? web : { html: "", css: "", js: pyCode };
+
+  const runNode = useCallback(() => {
+    setRunning(true);
+    setCelebrate(false);
+    setMood("thinking");
+    setOutput([]);
+    consoleTextRef.current = "";
+    setResultTab("console");
+    setRunNonce((n) => n + 1);
+  }, []);
+
+  // Guided tracks (Discord bots, MC mods, SwiftUI): no live execution — grade the
+  // code patterns the lesson asks for.
+  const runGuided = useCallback(() => {
+    setRunning(true);
+    setCelebrate(false);
+    setOutput([{ tone: "meta", text: "Checking your code…" }]);
+    const rr = evalSourceRules(lesson.checks, { stdout: "", code: pyCode });
+    setOutput(rr.every((r) => r.passed)
+      ? [{ tone: "out", text: "Looks right! ✓" }]
+      : [{ tone: "meta", text: "Not quite yet — check the goals on the left." }]);
+    finalize(rr);
+  }, [lesson.checks, pyCode, finalize]);
 
   const runWeb = useCallback(() => {
     setRunning(true);
@@ -232,7 +258,7 @@ function LessonInner({ flId }: { flId: string }) {
     setRunNonce((n) => n + 1);
   }, []);
 
-  const run = isWeb ? runWeb : runCode;
+  const run = isWeb ? runWeb : isNode ? runNode : isGuided ? runGuided : runCode;
 
   // Keyboard: Cmd/Ctrl+Enter to run.
   useEffect(() => {
@@ -376,8 +402,9 @@ function LessonInner({ flId }: { flId: string }) {
                 ))}
               </div>
             )}
+            {cfg?.note && <span className="workbar__note">{cfg.note}</span>}
             <button className="btn btn--run" onClick={() => void run()} disabled={running}>
-              {running ? "Running…" : "► Run"}
+              {running ? (isGuided ? "Checking…" : "Running…") : isGuided ? "✓ Check" : "► Run"}
               <kbd className="run-kbd">⌘↵</kbd>
             </button>
           </div>
@@ -419,10 +446,12 @@ function LessonInner({ flId }: { flId: string }) {
             </div>
 
             <div className="results__body">
-              {isWeb && (
-                <div style={{ display: resultTab === "preview" ? "block" : "none", height: "100%" }}>
+              {(isWeb || isNode) && (
+                // For Node this iframe is the (hidden) JS engine; for Web it's the
+                // visible preview when the Preview tab is active.
+                <div style={{ display: isWeb && resultTab === "preview" ? "block" : "none", height: "100%" }}>
                   <Preview
-                    files={web}
+                    files={iframeFiles}
                     runNonce={runNonce}
                     domRules={domRules}
                     onConsole={onConsole}
@@ -435,11 +464,11 @@ function LessonInner({ flId }: { flId: string }) {
                   lines={output}
                   running={running}
                   emptyHint={
-                    isPython
-                      ? "Press Run to execute your Python."
-                      : isRemote
-                        ? `Press Run to compile & run on the hosted ${course.title} runner.`
-                        : "console.log(...) output shows up here."
+                    isPython ? "Press Run to execute your Python."
+                    : isNode ? "Press Run — your JavaScript runs and console.log output shows here."
+                    : isGuided ? "Press Check — we verify the code you wrote."
+                    : isRemote ? `Press Run to compile & run on the hosted ${course.title} runner.`
+                    : "console.log(...) output shows up here."
                   }
                 />
               )}

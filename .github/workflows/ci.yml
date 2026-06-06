@@ -51,5 +51,5 @@ jobs:
       - name: Accessibility (axe-core, no serious/critical violations)
         run: npm run a11y
 
-      - name: Verify hosted-runner lessons on the real compilers (Java + Rust + Swift)
-        run: TRACKS=java,rust,swift npm run verify:remote
+      - name: Verify hosted-runner lessons on the real compilers (Java + Rust + Swift + Bash)
+        run: TRACKS=java,rust,swift,bash npm run verify:remote
