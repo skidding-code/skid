@@ -2,11 +2,28 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Hosts allowed to reach the dev/preview server. When self-hosting behind a
+// reverse proxy / custom domain, Vite otherwise rejects the request with
+// "This host is not allowed". Set ALLOWED_HOSTS=host1,host2 (or ALLOWED_HOSTS=all
+// to permit any) to override the defaults below.
+const allowedHosts =
+  process.env.ALLOWED_HOSTS === "all"
+    ? true
+    : (process.env.ALLOWED_HOSTS?.split(",").map((h) => h.trim()).filter(Boolean) ?? [
+        ".renmin.site",
+        "localhost",
+      ]);
+
 // https://vitejs.dev/config/
 export default defineConfig({
   // Use relative base so the built app works when opened from a file://-style
   // path inside the Tauri / Capacitor native wrappers as well as from the web.
   base: "./",
+  // Bind to all interfaces + accept the configured hosts so a reverse proxy can
+  // forward to it. (For real production hosting, prefer serving the static
+  // `dist/` folder with any web server — see README.)
+  server: { host: true, allowedHosts },
+  preview: { host: true, allowedHosts },
   plugins: [
     react(),
     VitePWA({

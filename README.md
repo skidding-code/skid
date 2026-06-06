@@ -48,6 +48,29 @@ go. To publish:
 It publishes to `https://<owner>.github.io/<repo>/`. Any static host (Netlify,
 Vercel, Cloudflare Pages, S3) also works — just serve the `dist/` folder.
 
+### Self-hosting on your own domain
+
+`npm run build` produces a static `dist/` that works served from a domain root
+or a sub-path. The robust way to serve it is any static web server:
+
+```bash
+npm ci && npm run build
+npx serve -s dist -l 4173        # or nginx / Caddy / Apache pointing at dist/
+```
+
+If instead you put it behind a reverse proxy via `npm run preview`, Vite blocks
+unknown hostnames by default. Hosts ending in `.renmin.site` and `localhost` are
+allowed out of the box; override with an env var:
+
+```bash
+ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com npm run preview -- --port 4173 --host
+# or, to allow any host:
+ALLOWED_HOSTS=all npm run preview -- --port 4173 --host
+```
+
+Serve over **HTTPS** so the service worker registers (needed for install +
+offline). The app itself runs fine over plain HTTP too.
+
 ## How code runs
 
 - **Python** runs in your browser via Pyodide (WebAssembly), bundled locally so
