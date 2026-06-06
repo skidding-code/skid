@@ -21,6 +21,10 @@ interface ProgressState {
   /** Consecutive-day streak state. */
   streak: number;
   lastActiveDay: string | null;
+  /** Placement result per track: chapterId to start at ("" = aced/mastered). */
+  placement: Record<string, string>;
+  /** Personal plan is opt-in — OFF by default. */
+  planEnabled: boolean;
 
   markComplete: (lessonId: string) => void;
   isComplete: (lessonId: string) => boolean;
@@ -30,6 +34,8 @@ interface ProgressState {
   resetAll: () => void;
   setTheme: (t: ThemeMode) => void;
   setSound: (on: boolean) => void;
+  setPlacement: (track: string, chapterId: string) => void;
+  setPlanEnabled: (on: boolean) => void;
 }
 
 export const useProgress = create<ProgressState>()(
@@ -41,6 +47,8 @@ export const useProgress = create<ProgressState>()(
       soundOn: true,
       streak: 0,
       lastActiveDay: null,
+      placement: {},
+      planEnabled: false,
 
       markComplete: (lessonId) =>
         set((s) => {
@@ -72,9 +80,13 @@ export const useProgress = create<ProgressState>()(
           delete saved[lessonId];
           return { completed, saved };
         }),
-      resetAll: () => set({ completed: {}, saved: {}, streak: 0, lastActiveDay: null }),
+      resetAll: () =>
+        set({ completed: {}, saved: {}, streak: 0, lastActiveDay: null, placement: {}, planEnabled: false }),
       setTheme: (theme) => set({ theme }),
       setSound: (soundOn) => set({ soundOn }),
+      setPlacement: (track, chapterId) =>
+        set((s) => ({ placement: { ...s.placement, [track]: chapterId } })),
+      setPlanEnabled: (planEnabled) => set({ planEnabled }),
     }),
     { name: "playground-progress-v1" },
   ),

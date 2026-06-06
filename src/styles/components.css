@@ -556,6 +556,87 @@
 /* brand logo: use the display font, code-style mark */
 .appbar__logo-glyph { font-family: var(--font-mono); }
 .appbar__title { font-family: var(--font-display); }
+
+/* ── Placement test ──────────────────────────────────────────────────────── */
+.placement { max-width: 760px; margin: 0 auto; padding: clamp(20px, 4vw, 48px); }
+.placement__intro { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 24px; }
+.placement__intro h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); }
+.placement__intro p { color: var(--text-dim); max-width: 52ch; line-height: 1.55; }
+.placement__badge { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--accent), #2bd07c); box-shadow: var(--shadow-sm); }
+.placement__badge--done { background: linear-gradient(135deg, #ffcf5c, #ff8a3d); }
+.placement__h2 { font-size: 1.15rem; margin: 18px 0 12px; }
+.placement__pick { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.pickcard { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px; border-radius: var(--r-md); background: var(--surface); border: 2px solid var(--border-soft); cursor: pointer; position: relative; transition: border-color 0.15s, transform 0.12s var(--ease-spring); }
+.pickcard:hover { transform: translateY(-2px); }
+.pickcard--on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--surface)); }
+.pickcard__name { font-weight: 700; font-family: var(--font-display); }
+.pickcard__check { position: absolute; top: 8px; right: 8px; color: var(--accent-strong); }
+.placement__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 26px; }
+
+.placement--quiz { max-width: 680px; }
+.quiz__bar { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.quiz__progress { flex: 1; height: 8px; border-radius: var(--r-pill); background: var(--surface-3); overflow: hidden; }
+.quiz__progress > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #2bd07c); transition: width 0.3s var(--ease); }
+.quiz__count { font-size: 0.82rem; font-weight: 700; color: var(--text-faint); white-space: nowrap; }
+.quiz__head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+.quiz__concept { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-strong); }
+.quiz__prompt { font-size: 1.35rem; margin-top: 4px; }
+.quiz__code { font-family: var(--font-mono); font-size: 0.92rem; background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 16px; white-space: pre-wrap; }
+.quiz__options { display: flex; flex-direction: column; gap: 10px; }
+.quiz__option { display: flex; align-items: center; gap: 12px; text-align: left; padding: 14px 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: border-color 0.12s, transform 0.1s var(--ease-spring), background 0.12s; }
+.quiz__option:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, var(--surface)); transform: translateX(3px); }
+.quiz__option code { font-family: var(--font-mono); font-size: 0.92rem; white-space: pre-wrap; color: var(--text); }
+.quiz__opt-key { width: 28px; height: 28px; flex: none; border-radius: 8px; display: grid; place-items: center; font-weight: 800; font-size: 0.85rem; background: var(--surface-3); color: var(--text-dim); }
+
+.results-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.result-card { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border-soft); }
+.result-card__body { flex: 1; min-width: 0; }
+.result-card__track { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); }
+.result-card__head { font-weight: 800; font-family: var(--font-display); font-size: 1.05rem; margin: 2px 0; }
+.result-card__sub { color: var(--text-dim); font-size: 0.9rem; line-height: 1.4; }
+.result-card .btn { flex: none; }
+.plan-toggle { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: var(--r-md); background: var(--surface-2); border: 1px dashed var(--border); cursor: pointer; }
+.plan-toggle input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); }
+.plan-toggle span { display: flex; flex-direction: column; }
+.plan-toggle__sub { color: var(--text-dim); font-size: 0.85rem; line-height: 1.45; margin-top: 3px; }
+
+/* home placement banner */
+.placebar { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); display: grid; grid-template-columns: 1fr; gap: 12px; }
+.placebar__card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--border-soft); box-shadow: var(--shadow-sm); }
+.placebar__card:hover { border-color: var(--accent); }
+.placebar__icon { width: 42px; height: 42px; flex: none; border-radius: 12px; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--accent), #2bd07c); }
+.placebar__card--plan .placebar__icon { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+.placebar__text { flex: 1; display: flex; flex-direction: column; }
+.placebar__text strong { font-family: var(--font-display); }
+.placebar__text span { color: var(--text-dim); font-size: 0.9rem; }
+.placebar__go { font-weight: 800; color: var(--accent-strong); white-space: nowrap; }
+@media (min-width: 720px) { .placebar:has(.placebar__card--plan) { grid-template-columns: 1fr 1fr; } }
+
+/* plan page */
+.plan-page { max-width: 820px; margin: 0 auto; padding: clamp(20px, 4vw, 44px); }
+.plan-head { margin-bottom: 18px; }
+.plan-head h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); }
+.plan-head p { color: var(--text-dim); margin: 6px 0 12px; }
+.plan-track { margin-bottom: 26px; }
+.plan-track__head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.plan-track__title { font-weight: 800; font-family: var(--font-display); font-size: 1.2rem; flex: 1; }
+.plan-track__count { font-weight: 800; color: var(--text-faint); background: var(--surface-2); padding: 5px 12px; border-radius: var(--r-pill); font-size: 0.85rem; }
+.plan-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.plan-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border-soft); }
+.plan-row:hover { border-color: var(--accent); }
+.plan-row__mark { width: 26px; height: 26px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--surface-3); color: var(--text-dim); }
+.plan-row.is-done .plan-row__mark { background: var(--good); color: #04120b; }
+.plan-row.is-next { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+.plan-row.is-next .plan-row__mark { background: var(--accent); color: #fff; }
+.plan-row__title { font-weight: 700; flex: 1; }
+.plan-row.is-done .plan-row__title { color: var(--text-dim); }
+.plan-row__chap { color: var(--text-faint); font-size: 0.82rem; }
+.plan-row__next { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-strong); }
+.plan-empty { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 60px 20px; }
+.plan-empty p { color: var(--text-dim); max-width: 44ch; }
+
+.settings__links { display: flex; gap: 10px; flex-wrap: wrap; }
+.toggle__hint { color: var(--text-faint); font-weight: 400; font-size: 0.85rem; }
 .route-loading__spinner {
   width: 22px; height: 22px; border-radius: 50%;
   border: 3px solid var(--surface-3); border-top-color: var(--accent);

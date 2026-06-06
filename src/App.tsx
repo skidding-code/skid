@@ -11,6 +11,8 @@ const CoursePage = lazy(() => import("./pages/CoursePage").then((m) => ({ defaul
 const LessonPage = lazy(() => import("./pages/LessonPage").then((m) => ({ default: m.LessonPage })));
 const SandboxPage = lazy(() => import("./pages/SandboxPage").then((m) => ({ default: m.SandboxPage })));
 const ProgressPage = lazy(() => import("./pages/ProgressPage").then((m) => ({ default: m.ProgressPage })));
+const PlacementPage = lazy(() => import("./pages/PlacementPage").then((m) => ({ default: m.PlacementPage })));
+const PlanPage = lazy(() => import("./pages/PlanPage").then((m) => ({ default: m.PlanPage })));
 
 function NotFound() {
   return (
@@ -47,6 +49,8 @@ function Shell() {
             <Route path="/lesson/:id" element={<LessonPage />} />
             <Route path="/sandbox" element={<SandboxPage />} />
             <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/placement" element={<PlacementPage />} />
+            <Route path="/plan" element={<PlanPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

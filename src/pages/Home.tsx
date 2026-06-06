@@ -11,6 +11,9 @@ import { xpFromCompleted } from "../game/xp";
 export function Home() {
   const completed = useProgress((s) => s.completed);
   const streak = useProgress((s) => s.streak);
+  const placement = useProgress((s) => s.placement);
+  const planEnabled = useProgress((s) => s.planEnabled);
+  const placed = Object.keys(placement).length > 0;
 
   const totalLessons = courses.reduce((n, c) => n + trackLessons(c.track).length, 0);
   const totalDone = Object.keys(completed).length;
@@ -59,6 +62,27 @@ export function Home() {
           <div className="hero__blob" />
           <Mascot mood="happy" size={150} />
         </div>
+      </section>
+
+      <section className="placebar">
+        <Link to={placed ? "/placement" : "/placement"} className="placebar__card">
+          <span className="placebar__icon"><Icon name="target" size={22} /></span>
+          <span className="placebar__text">
+            <strong>{placed ? "Your level is set" : "Not sure where to start?"}</strong>
+            <span>{placed ? "Retake the placement test or review your starting points." : "Take a 2-minute placement test and we'll drop you in at the right spot."}</span>
+          </span>
+          <span className="placebar__go">{placed ? "Review →" : "Find my level →"}</span>
+        </Link>
+        {placed && planEnabled && (
+          <Link to="/plan" className="placebar__card placebar__card--plan">
+            <span className="placebar__icon"><Icon name="compass" size={22} /></span>
+            <span className="placebar__text">
+              <strong>Your plan</strong>
+              <span>Your personalized, step-by-step checklist.</span>
+            </span>
+            <span className="placebar__go">Open →</span>
+          </Link>
+        )}
       </section>
 
       {resume && (

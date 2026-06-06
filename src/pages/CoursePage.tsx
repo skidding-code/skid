@@ -1,6 +1,5 @@
 import { Link, useParams, Navigate } from "react-router-dom";
-import { getCourse, trackLessons } from "../curriculum";
-import type { Track } from "../curriculum/types";
+import { courses, trackLessons } from "../curriculum";
 import { useProgress } from "../store/progress";
 import { ProgressRing } from "../components/ProgressRing";
 import { LangMark } from "../components/LangMark";
@@ -10,8 +9,10 @@ export function CoursePage() {
   const { track } = useParams<{ track: string }>();
   const completed = useProgress((s) => s.completed);
 
-  if (track !== "python" && track !== "web") return <Navigate to="/" replace />;
-  const course = getCourse(track as Track);
+  // Accept any real course track (python, web, swift, java, rust, …) — not just
+  // python/web. Unknown tracks fall back home.
+  const course = courses.find((c) => c.track === track);
+  if (!course) return <Navigate to="/" replace />;
   const list = trackLessons(course.track);
   const done = list.filter((l) => completed[l.lesson.id]).length;
 

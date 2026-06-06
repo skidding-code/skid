@@ -9,7 +9,7 @@ import { LangMark } from "../components/LangMark";
 import { Icon } from "../components/Icon";
 
 export function ProgressPage() {
-  const { completed, streak, soundOn, setSound, resetAll } = useProgress();
+  const { completed, streak, soundOn, setSound, resetAll, planEnabled, setPlanEnabled } = useProgress();
   const total = Object.keys(completed).length;
   const xp = xpFromCompleted(total);
   const info = levelInfo(xp);
@@ -77,6 +77,14 @@ export function ProgressPage() {
           <input type="checkbox" checked={soundOn} onChange={(e) => setSound(e.target.checked)} />
           <span>Sound effects {soundOn ? "on" : "off"}</span>
         </label>
+        <label className="toggle">
+          <input type="checkbox" checked={planEnabled} onChange={(e) => setPlanEnabled(e.target.checked)} />
+          <span>Personal plan {planEnabled ? "on" : "off"} <span className="toggle__hint">— a step-by-step checklist from your placement test (off by default)</span></span>
+        </label>
+        <div className="settings__links">
+          <Link to="/placement" className="btn btn--soft">Take the placement test</Link>
+          {planEnabled && <Link to="/plan" className="btn btn--soft">Open my plan</Link>}
+        </div>
         <button className="btn btn--soft" onClick={onReset}>Reset all progress</button>
       </section>
     </div>

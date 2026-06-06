@@ -64,6 +64,30 @@ export function courseStats(track: Track) {
   return { total: trackLessons(track).length };
 }
 
+/** Find a chapter (and its course) by id, across all tracks. */
+export function chapterById(chapterId: string): { chapter: Chapter; course: Course } | undefined {
+  for (const course of courses) {
+    const chapter = course.chapters.find((c) => c.id === chapterId);
+    if (chapter) return { chapter, course };
+  }
+  return undefined;
+}
+
+/** The first lesson of a chapter — i.e. where to start when placed there. */
+export function firstLessonOfChapter(chapterId: string): FlatLesson | undefined {
+  const found = chapterById(chapterId);
+  if (!found) return undefined;
+  const firstId = found.chapter.lessons[0]?.id;
+  return firstId ? lessonIndex.get(firstId) : undefined;
+}
+
+/** All lessons in a track from a given chapter onward (for a personal plan). */
+export function lessonsFromChapter(track: Track, chapterId: string): FlatLesson[] {
+  const list = trackLessons(track);
+  const start = list.findIndex((fl) => fl.chapter.id === chapterId);
+  return start < 0 ? list : list.slice(start);
+}
+
 /** The first lesson in a track the learner hasn't completed yet — i.e. where to
  * resume. Returns undefined when the whole track is done. */
 export function nextIncomplete(
