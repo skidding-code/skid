@@ -104,6 +104,21 @@ export function lessonsFromChapter(track: Track, chapterId: string): FlatLesson[
   return start < 0 ? list : list.slice(start);
 }
 
+/** All lessons in a track BEFORE a given chapter (the "assumed completed" set). */
+export function lessonsBeforeChapter(track: Track, chapterId: string): FlatLesson[] {
+  const list = trackLessons(track);
+  const start = list.findIndex((fl) => fl.chapter.id === chapterId);
+  return start <= 0 ? [] : list.slice(0, start);
+}
+
+/** The chapter id that follows the given one in a track (or the same id if it's
+ * already the last chapter). */
+export function chapterAfter(track: Track, chapterId: string): string {
+  const course = getCourse(track);
+  const i = course.chapters.findIndex((c) => c.id === chapterId);
+  return course.chapters[i + 1]?.id ?? chapterId;
+}
+
 /** The first lesson in a track the learner hasn't completed yet — i.e. where to
  * resume. Returns undefined when the whole track is done. */
 export function nextIncomplete(

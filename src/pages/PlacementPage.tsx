@@ -1,7 +1,15 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { Track } from "../curriculum/types";
-import { courses, chapterById, firstLessonOfChapter, getCourse } from "../curriculum";
+import {
+  courses,
+  chapterById,
+  firstLessonOfChapter,
+  getCourse,
+  trackLessons,
+  lessonsBeforeChapter,
+  chapterAfter,
+} from "../curriculum";
 import { PLACEMENT, recommend, type Placement } from "../curriculum/placement";
 import { useProgress } from "../store/progress";
 import { LangMark } from "../components/LangMark";
@@ -145,11 +153,28 @@ export function PlacementPage() {
       </div>
 
       <div className="results-list">
-        {TRACK_ORDER.filter((t) => selected.has(t)).map((t) => {
-          const rec = recommend(t, answers[t] ?? []);
-          return <ResultCard key={t} track={t} rec={rec} />;
-        })}
+        {TRACK_ORDER.filter((t) => selected.has(t)).map((t) => (
+          <ResultCard key={t} track={t} rec={recommend(t, answers[t] ?? [])} />
+        ))}
       </div>
+
+      {courses.filter((c) => !selected.has(c.track)).length > 0 && (
+        <div className="blank-courses">
+          <h2 className="placement__h2">Courses you didn't test — start fresh anytime</h2>
+          <div className="blank-courses__grid">
+            {courses.filter((c) => !selected.has(c.track)).map((c) => {
+              const first = trackLessons(c.track)[0];
+              return (
+                <Link key={c.track} to={first ? `/lesson/${first.lesson.id}` : `/learn/${c.track}`} className="blank-course">
+                  <LangMark track={c.track} size={36} radius={11} />
+                  <span className="blank-course__name">{c.title}</span>
+                  <span className="blank-course__go">Start →</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <label className="plan-toggle">
         <input
@@ -179,35 +204,66 @@ export function PlacementPage() {
 }
 
 function ResultCard({ track, rec }: { track: Track; rec: Placement }) {
+  const nav = useNavigate();
+  const markManyComplete = useProgress((s) => s.markManyComplete);
   const course = getCourse(track);
-  if (rec.aced) {
-    return (
-      <div className="result-card">
+
+  // Where we'd start, and what we assume you already know (everything before it).
+  const pq = PLACEMENT[track];
+  const lastTested = pq && pq.length ? pq[pq.length - 1].chapterId : undefined;
+  const startChapterId = rec.aced
+    ? lastTested
+      ? chapterAfter(track, lastTested)
+      : course.chapters[0]?.id
+    : rec.chapterId ?? course.chapters[0]?.id;
+  const startCh = startChapterId ? chapterById(startChapterId) : undefined;
+  const startLesson = startChapterId ? firstLessonOfChapter(startChapterId) : undefined;
+  const assumed = startChapterId ? lessonsBeforeChapter(track, startChapterId) : [];
+  const firstLesson = trackLessons(track)[0];
+
+  const continueHere = () => {
+    if (assumed.length) markManyComplete(assumed.map((fl) => fl.lesson.id));
+    nav(startLesson ? `/lesson/${startLesson.lesson.id}` : `/learn/${track}`);
+  };
+  const startScratch = () => nav(firstLesson ? `/lesson/${firstLesson.lesson.id}` : `/learn/${track}`);
+
+  // Which chapters we're assuming are done.
+  const assumedChapters = [...new Set(assumed.map((fl) => fl.chapter.title))];
+
+  return (
+    <div className="result-card result-card--big">
+      <div className="result-card__top">
         <LangMark track={track} size={48} />
         <div className="result-card__body">
-          <div className="result-card__track">{course.title}</div>
-          <div className="result-card__head">You aced it — {rec.correct}/{rec.total} ⭐</div>
-          <div className="result-card__sub">You've got the fundamentals. Dive into any chapter.</div>
+          <div className="result-card__track">
+            {course.title} · {rec.correct}/{rec.total} correct{rec.aced ? " — aced it! ⭐" : ""}
+          </div>
+          <div className="result-card__head">
+            {rec.aced ? "You're past the basics — start at" : "Start at"}: {startCh?.chapter.title ?? "the beginning"}
+          </div>
+          {startCh?.chapter.summary && <div className="result-card__sub">{startCh.chapter.summary}</div>}
         </div>
-        <Link to={`/learn/${track}`} className="btn btn--primary">Browse →</Link>
       </div>
-    );
-  }
-  const ch = rec.chapterId ? chapterById(rec.chapterId) : undefined;
-  const startLesson = rec.chapterId ? firstLessonOfChapter(rec.chapterId) : undefined;
-  return (
-    <div className="result-card">
-      <LangMark track={track} size={48} />
-      <div className="result-card__body">
-        <div className="result-card__track">{course.title} · {rec.correct}/{rec.total} correct</div>
-        <div className="result-card__head">Start at: {ch?.chapter.title ?? "the beginning"}</div>
-        <div className="result-card__sub">{ch?.chapter.summary}</div>
-      </div>
-      {startLesson ? (
-        <Link to={`/lesson/${startLesson.lesson.id}`} className="btn btn--primary">Start here →</Link>
-      ) : (
-        <Link to={`/learn/${track}`} className="btn btn--primary">Start →</Link>
+
+      {assumedChapters.length > 0 && (
+        <div className="assume">
+          <div className="assume__title">
+            <Icon name="check" size={14} /> We'll assume you've already done {assumed.length} lesson{assumed.length === 1 ? "" : "s"}:
+          </div>
+          <div className="assume__chapters">
+            {assumedChapters.map((name) => (
+              <span key={name} className="chip">{name}</span>
+            ))}
+          </div>
+        </div>
       )}
+
+      <div className="result-card__actions">
+        <button className="btn btn--primary" onClick={continueHere}>
+          {assumed.length ? "Continue from here (mark those done)" : "Start here"} →
+        </button>
+        <button className="btn btn--soft" onClick={startScratch}>Start from scratch</button>
+      </div>
     </div>
   );
 }

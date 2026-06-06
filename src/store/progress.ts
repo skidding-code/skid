@@ -39,6 +39,8 @@ interface ProgressState {
   planEnabled: boolean;
 
   markComplete: (lessonId: string) => void;
+  /** Mark many lessons complete at once (e.g. "assume earlier lessons done"). */
+  markManyComplete: (lessonIds: string[]) => void;
   isComplete: (lessonId: string) => boolean;
   saveCode: (lessonId: string, code: string) => void;
   getSaved: (lessonId: string) => string | undefined;
@@ -88,6 +90,13 @@ export const useProgress = create<ProgressState>()(
             streak,
             lastActiveDay: today,
           };
+        }),
+      markManyComplete: (lessonIds) =>
+        set((s) => {
+          const completed = { ...s.completed };
+          const now = Date.now();
+          for (const id of lessonIds) if (!completed[id]) completed[id] = now;
+          return { completed };
         }),
       isComplete: (lessonId) => !!get().completed[lessonId],
       saveCode: (lessonId, code) => set((s) => ({ saved: { ...s.saved, [lessonId]: code } })),

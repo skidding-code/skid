@@ -595,6 +595,19 @@
 .result-card__head { font-weight: 800; font-family: var(--font-display); font-size: 1.05rem; margin: 2px 0; }
 .result-card__sub { color: var(--text-dim); font-size: 0.9rem; line-height: 1.4; }
 .result-card .btn { flex: none; }
+.result-card--big { flex-direction: column; align-items: stretch; gap: 12px; }
+.result-card__top { display: flex; align-items: center; gap: 16px; }
+.result-card__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.assume { background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: var(--r-md); padding: 12px 14px; }
+.assume__title { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 0.88rem; color: var(--good); margin-bottom: 8px; }
+.assume__chapters { display: flex; flex-wrap: wrap; gap: 6px; }
+.blank-courses { margin-bottom: 20px; }
+.blank-courses__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.blank-course { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border-soft); }
+.blank-course:hover { border-color: var(--accent); }
+.blank-course__name { flex: 1; font-weight: 700; }
+.blank-course__go { color: var(--accent-strong); font-weight: 800; font-size: 0.85rem; }
+
 .plan-toggle { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: var(--r-md); background: var(--surface-2); border: 1px dashed var(--border); cursor: pointer; }
 .plan-toggle input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); }
 .plan-toggle span { display: flex; flex-direction: column; }
