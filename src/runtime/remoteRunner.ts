@@ -1,15 +1,87 @@
 import type { Track } from "../curriculum/types";
 
 /**
- * Runs Swift / Java / Rust on a hosted compiler service (Wandbox), since none of
- * them have an in-browser runtime. Wandbox is token-free and CORS-enabled.
+ * Runs Swift / Java / Rust on hosted compilers, since none have an in-browser
+ * runtime. Java + Rust go to Wandbox (token-free, CORS). Swift goes to Compiler
+ * Explorer / godbolt (token-free, CORS) because Wandbox's Swift container is
+ * frequently broken on their side.
  *
  * No DOM APIs are used (only `fetch`), so this same module runs in the browser
  * AND in Node — which lets the curriculum be verified server-side against the
- * real compilers (see scripts/verify-remote.mjs).
+ * real compilers (see scripts/verify-remote.ts).
  */
 
 const WANDBOX = "https://wandbox.org/api";
+const GODBOLT = "https://godbolt.org/api";
+// Swift compilers on godbolt that support execution (amd64), newest first.
+const SWIFT_GODBOLT_IDS = ["swift63", "swift624", "swift62", "swift61", "swift603"];
+let swiftIdCache: string | null = null;
+
+const joinText = (a?: Array<{ text: string }>): string => (a ?? []).map((x) => x.text).join("\n");
+
+/** Compile + run Swift on Compiler Explorer. */
+async function runSwiftGodbolt(code: string, timeoutMs: number): Promise<RemoteRunResult> {
+  const ids = swiftIdCache ? [swiftIdCache] : SWIFT_GODBOLT_IDS;
+  let notFound = "";
+  for (const id of ids) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(`${GODBOLT}/compiler/${id}/compile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          source: code,
+          options: {
+            userArguments: "",
+            executeParameters: { args: [], stdin: "" },
+            compilerOptions: { skipAsm: true, executorRequest: true },
+            filters: { execute: true },
+            tools: [],
+            libraries: [],
+          },
+          lang: "swift",
+          allowStoreCodeDebug: true,
+        }),
+        signal: ctrl.signal,
+      });
+      if (res.status === 404) {
+        notFound = `Swift compiler ${id} not found`;
+        continue; // try the next id
+      }
+      if (!res.ok) throw new Error(`godbolt ${res.status}`);
+      const j = (await res.json()) as {
+        code?: number;
+        didExecute?: boolean;
+        stdout?: Array<{ text: string }>;
+        stderr?: Array<{ text: string }>;
+        buildResult?: { code?: number; stderr?: Array<{ text: string }> };
+      };
+      swiftIdCache = id;
+      const buildFailed = (j.buildResult?.code ?? 0) !== 0;
+      if (buildFailed) {
+        const err = joinText(j.buildResult?.stderr);
+        return { ok: false, stdout: "", stderr: err, error: err.split("\n")[0] || "Compile error" };
+      }
+      const stdout = joinText(j.stdout);
+      const stderr = joinText(j.stderr);
+      const ok = (j.code ?? 1) === 0 && j.didExecute !== false;
+      return { ok, stdout, stderr: ok ? "" : stderr, error: ok ? undefined : stderr || `Exited with status ${j.code}` };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return {
+        ok: false,
+        stdout: "",
+        stderr: msg,
+        error: "Couldn't reach the Swift compiler. Check your connection and try again.",
+        serviceError: true,
+      };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  return { ok: false, stdout: "", stderr: notFound, error: "No Swift compiler available right now.", serviceError: true };
+}
 
 // track -> the language label Wandbox uses in /list.json
 const WANDBOX_LANG: Partial<Record<Track, string>> = {
@@ -82,6 +154,9 @@ async function compileOnce(compiler: string, code: string, timeoutMs: number): P
  * compile/runtime errors — those come back in the result. Throws only never;
  * network problems are reported as `serviceError`. */
 export async function runRemote(track: Track, code: string, timeoutMs = 35_000): Promise<RemoteRunResult> {
+  // Swift runs on Compiler Explorer (Wandbox's Swift container is unreliable).
+  if (track === "swift") return runSwiftGodbolt(code, timeoutMs);
+
   const lang = WANDBOX_LANG[track];
   if (!lang) {
     return { ok: false, stdout: "", stderr: "", error: `No hosted runner for ${track}.`, serviceError: true };

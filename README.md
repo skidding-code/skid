@@ -77,11 +77,10 @@ offline). The app itself runs fine over plain HTTP too.
   it works **offline**.
 - **Web** (HTML/CSS/JS) renders live in a sandboxed iframe — also offline.
 - **Swift, Java, Rust** have no in-browser compiler, so they compile and run on
-  a **hosted runner** ([Wandbox](https://wandbox.org)) — this needs an internet
-  connection. Java and Rust are verified end-to-end against the real compilers
-  (`npm run verify:remote`). Swift uses the same path, but free Swift containers
-  are frequently down on the host side; when that happens the app says so and
-  invites a retry rather than pretending it ran.
+  **hosted runners** — this needs an internet connection. Java + Rust use
+  [Wandbox](https://wandbox.org); **Swift uses [Compiler Explorer](https://godbolt.org)**
+  (Wandbox's Swift container is unreliable). All three are verified end-to-end
+  against the real compilers in CI (`npm run verify:remote` → 36/36).
 - **Real execution.** Python runs in your browser via
   [Pyodide](https://pyodide.org/) (WebAssembly) in a Web Worker, so a runaway
   loop never freezes the UI. Web lessons render in a sandboxed live preview with
