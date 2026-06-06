@@ -7,6 +7,7 @@ const ACCENTS: Record<Track, [string, string]> = {
   java: ["#e76f00", "#5382a1"],
   rust: ["#dea584", "#a33d1a"],
   node: ["#a3b626", "#5c7a1e"],
+  typescript: ["#3178c6", "#235a97"],
   bash: ["#34d399", "#065f46"],
   discordpy: ["#5865f2", "#7c3aed"],
   mcmods: ["#7cae42", "#4d6b2a"],
@@ -53,6 +54,16 @@ function Glyph({ track }: { track: Track }) {
     case "node":
       // hexagon (Node)
       return <path d="M50 24 L73 37 V63 L50 76 L27 63 V37 Z" {...stroke} />;
+    case "typescript":
+      // square brackets hugging a capital T — "typed"
+      return (
+        <>
+          <path d="M40 32 H31 V68 H40" {...stroke} strokeWidth={6} />
+          <path d="M60 32 H69 V68 H60" {...stroke} strokeWidth={6} />
+          <line x1="44" y1="42" x2="56" y2="42" {...stroke} strokeWidth={6} />
+          <line x1="50" y1="42" x2="50" y2="62" {...stroke} strokeWidth={6} />
+        </>
+      );
     case "bash":
       // terminal prompt  >_
       return (

@@ -40,6 +40,7 @@ export function Header() {
             </span>
           </Link>
         )}
+        <Link to="/paths" className="appbar__link appbar__link--hide-sm">Paths</Link>
         <Link to="/sandbox" className="appbar__link appbar__link--hide-sm">Sandbox</Link>
         <Link to="/progress" className="appbar__link appbar__link--hide-sm">Progress</Link>
         {hasBackend && (

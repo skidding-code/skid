@@ -5,6 +5,7 @@ import { swiftCourse } from "./swift";
 import { javaCourse } from "./java";
 import { rustCourse } from "./rust";
 import { nodeCourse } from "./node";
+import { typescriptCourse } from "./typescript";
 import { bashCourse } from "./bash";
 import { discordpyCourse } from "./discordpy";
 import { mcmodsCourse } from "./mcmods";
@@ -13,6 +14,7 @@ import { swiftuiCourse } from "./swiftui";
 export const courses: Course[] = [
   pythonCourse,
   nodeCourse,
+  typescriptCourse,
   webCourse,
   swiftCourse,
   javaCourse,

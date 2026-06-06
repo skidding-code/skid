@@ -2,7 +2,7 @@ import type { Track } from "../curriculum/types";
 import type { EditorLang } from "../components/Editor";
 
 /** How a single-file track is executed (web is multi-file and handled apart). */
-export type ExecKind = "python" | "iframe" | "wandbox" | "godbolt" | "none";
+export type ExecKind = "python" | "iframe" | "typescript" | "wandbox" | "godbolt" | "none";
 
 export interface TrackConfig {
   /** CodeMirror grammar for the single-file editor. */
@@ -26,6 +26,8 @@ export const TRACK_CONFIG: Record<Exclude<Track, "web">, TrackConfig> = {
   rust: { lang: "rust", exec: "wandbox", fileName: "main.rs", runnable: true,
     note: "Compiles & runs on Wandbox." },
   node: { lang: "javascript", exec: "iframe", fileName: "index.js", runnable: true },
+  typescript: { lang: "typescript", exec: "typescript", fileName: "main.ts", runnable: true,
+    note: "Type-checked TypeScript, transpiled and run right in your browser." },
   bash: { lang: "bash", exec: "wandbox", fileName: "script.sh", runnable: true,
     note: "Runs on Wandbox." },
   discordpy: { lang: "python", exec: "none", fileName: "bot.py", runnable: false,

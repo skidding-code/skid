@@ -699,3 +699,91 @@
   .appbar__link { padding: 8px 10px; font-size: 0.88rem; }
   .lesson__bar-actions .btn { padding: 7px 9px; }
 }
+
+/* ── Learning paths ───────────────────────────────────────────────────────── */
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 40px 0 6px; }
+.section-head .section-title { margin: 0; }
+.section-head__link { font-weight: 800; color: var(--accent-strong); white-space: nowrap; }
+.section-lede { color: var(--text-dim); margin: 0 0 18px; max-width: 60ch; }
+
+/* Home strip: compact path chips */
+.pathstrip__grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px;
+}
+.pathchip {
+  position: relative; display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--r-md);
+  background: var(--surface); border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.2s;
+}
+.pathchip::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px;
+  background: linear-gradient(180deg, var(--c1, var(--accent)), var(--c2, var(--accent-strong))); }
+.pathchip:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.pathchip__text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.pathchip__title { font-weight: 800; }
+.pathchip__sub { color: var(--text-dim); font-size: 0.82rem; }
+.pathchip__go { color: var(--accent-strong); font-weight: 900; font-size: 1.1rem; }
+
+/* Paths gallery page */
+.paths { max-width: 1100px; margin: 0 auto; }
+.paths__head { margin: 8px 0 26px; }
+.paths__eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 0.74rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-strong); }
+.paths__title { font-size: clamp(1.7rem, 4vw, 2.6rem); margin: 8px 0; }
+.paths__sub { color: var(--text-dim); max-width: 62ch; line-height: 1.55; }
+.paths__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.path-card {
+  position: relative; display: flex; flex-direction: column; padding: 22px;
+  border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+  transition: transform 0.18s var(--ease-spring), box-shadow 0.2s;
+}
+.path-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 5px;
+  background: linear-gradient(90deg, var(--c1, var(--accent)), var(--c2, var(--accent-strong))); }
+.path-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.path-card__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.path-card__title { font-size: 1.4rem; margin: 0 0 2px; }
+.path-card__subtitle { color: var(--accent-strong); font-weight: 700; font-size: 0.9rem; margin: 0 0 10px; }
+.path-card__blurb { color: var(--text-dim); line-height: 1.5; flex: 1; margin: 0 0 16px; }
+.path-card__meta { display: flex; align-items: center; gap: 8px; color: var(--text-faint); font-size: 0.85rem; font-weight: 600; }
+.path-card__go { margin-left: auto; color: var(--accent-strong); font-weight: 800; }
+
+/* Path detail page */
+.pathview { max-width: 880px; margin: 0 auto; }
+.pathview__back { font-weight: 700; color: var(--text-dim); }
+.pathview__hero { display: flex; gap: 18px; align-items: flex-start; margin: 14px 0 28px;
+  padding: 22px; border-radius: var(--r-lg);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--c1) 14%, var(--surface)), var(--surface));
+  border: 1px solid color-mix(in srgb, var(--c1) 28%, var(--border)); }
+.pathview__hero-text { flex: 1; min-width: 0; }
+.pathview__eyebrow { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-strong); }
+.pathview__title { font-size: clamp(1.6rem, 4vw, 2.3rem); margin: 4px 0 8px; }
+.pathview__blurb { color: var(--text-dim); line-height: 1.55; margin: 0 0 16px; max-width: 60ch; }
+.pathview__cta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.pathview__count { display: inline-flex; align-items: center; gap: 9px; color: var(--text-dim); font-weight: 700; font-size: 0.9rem; }
+.pathview__done { display: inline-flex; align-items: center; gap: 7px; font-weight: 800; color: #16a34a; }
+
+.pathview__segments { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 26px; }
+.pathseg__head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.pathseg__label { font-size: 1.15rem; margin: 0; }
+.pathseg__why { color: var(--text-dim); font-size: 0.85rem; margin: 1px 0 0; }
+.pathseg__course { margin-left: auto; font-weight: 700; color: var(--accent-strong); white-space: nowrap; font-size: 0.88rem; }
+.pathseg__chapters { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;
+  border-left: 2px dashed var(--border); margin-left: 14px; padding-left: 16px; }
+.pathchap { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px;
+  border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border-soft); }
+.pathchap__num { flex: none; width: 24px; height: 24px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--surface-2); font-weight: 800; font-size: 0.78rem; color: var(--text-dim); }
+.pathchap__glyph { font-size: 1.2rem; }
+.pathchap__text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.pathchap__title { font-weight: 800; }
+.pathchap__summary { color: var(--text-dim); font-size: 0.83rem; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pathchap__count { flex: none; display: inline-flex; align-items: center; gap: 4px;
+  font-weight: 700; font-size: 0.8rem; color: var(--text-faint); }
+.pathchap__count.is-done { color: #16a34a; }
+@media (max-width: 560px) {
+  .pathview__hero { flex-direction: column; }
+  .pathseg__course { margin-left: 0; }
+}

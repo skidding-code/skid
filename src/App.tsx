@@ -13,6 +13,8 @@ const LessonPage = lazy(() => import("./pages/LessonPage").then((m) => ({ defaul
 const SandboxPage = lazy(() => import("./pages/SandboxPage").then((m) => ({ default: m.SandboxPage })));
 const ProgressPage = lazy(() => import("./pages/ProgressPage").then((m) => ({ default: m.ProgressPage })));
 const PlacementPage = lazy(() => import("./pages/PlacementPage").then((m) => ({ default: m.PlacementPage })));
+const PathsPage = lazy(() => import("./pages/PathsPage").then((m) => ({ default: m.PathsPage })));
+const PathDetailPage = lazy(() => import("./pages/PathsPage").then((m) => ({ default: m.PathDetailPage })));
 const PlanPage = lazy(() => import("./pages/PlanPage").then((m) => ({ default: m.PlanPage })));
 const AccountPage = lazy(() => import("./pages/AccountPage").then((m) => ({ default: m.AccountPage })));
 const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage").then((m) => ({ default: m.LeaderboardPage })));
@@ -53,6 +55,8 @@ function Shell() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/learn/:track" element={<CoursePage />} />
+            <Route path="/paths" element={<PathsPage />} />
+            <Route path="/paths/:id" element={<PathDetailPage />} />
             <Route path="/lesson/:id" element={<LessonPage />} />
             <Route path="/sandbox" element={<SandboxPage />} />
             <Route path="/progress" element={<ProgressPage />} />

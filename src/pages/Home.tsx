@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { courses, trackLessons, nextIncomplete, getLesson } from "../curriculum";
+import { learningPaths, pathProgress } from "../curriculum/paths";
 import { useProgress } from "../store/progress";
 import { ProgressRing } from "../components/ProgressRing";
 import { Mascot } from "../components/Mascot";
@@ -34,10 +35,10 @@ export function Home() {
             <span className="hero__title-grad">watch it come alive.</span>
           </h1>
           <p className="hero__sub">
-            Learn <strong>Python</strong>, <strong>JavaScript</strong>, <strong>Swift</strong>,{" "}
-            <strong>Java</strong> &amp; <strong>Rust</strong> by running code yourself — not by
-            watching someone else do it. No setup, no "works on my machine," no tears.
-            (Okay, maybe happy ones.)
+            Learn <strong>Python</strong>, <strong>JavaScript</strong>, <strong>TypeScript</strong>,{" "}
+            <strong>Swift</strong>, <strong>Java</strong> &amp; <strong>Rust</strong> by running code
+            yourself — not by watching someone else do it. No setup, no "works on my machine," no
+            tears. (Okay, maybe happy ones.)
           </p>
           <div className="hero__cta">
             <Link to="/learn/python" className="btn btn--primary btn--lg">Start with Python →</Link>
@@ -98,6 +99,36 @@ export function Home() {
           </Link>
         </section>
       )}
+
+      <section className="pathstrip">
+        <div className="section-head">
+          <h2 className="section-title">Follow a path</h2>
+          <Link to="/paths" className="section-head__link">All paths →</Link>
+        </div>
+        <p className="section-lede">
+          Not sure which language? Pick a goal instead — we'll route you through the right chapters in order.
+        </p>
+        <div className="pathstrip__grid">
+          {learningPaths.map((p) => {
+            const { total, done } = pathProgress(p, completed);
+            return (
+              <Link
+                key={p.id}
+                to={`/paths/${p.id}`}
+                className="pathchip"
+                style={{ ["--c1" as string]: p.accent[0], ["--c2" as string]: p.accent[1] } as React.CSSProperties}
+              >
+                <LangMark track={p.faceTrack} size={38} radius={11} />
+                <span className="pathchip__text">
+                  <span className="pathchip__title">{p.title}</span>
+                  <span className="pathchip__sub">{done > 0 ? `${done}/${total} lessons · continue` : p.subtitle}</span>
+                </span>
+                <span className="pathchip__go">→</span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="tracks">
         <h2 className="section-title">Pick your language</h2>

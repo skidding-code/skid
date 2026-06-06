@@ -72,7 +72,7 @@ async function testLesson(id, track) {
   }
 }
 
-const tracks = ["python", "web", "node"];
+const tracks = ["python", "web", "node", "typescript"];
 const results = [];
 for (const track of tracks) {
   let ids = await lessonIdsFor(track);

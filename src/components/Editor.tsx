@@ -13,7 +13,7 @@ import { EditorView } from "@codemirror/view";
 import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
 import { useResolvedTheme } from "../hooks/useTheme";
 
-export type EditorLang = "python" | "html" | "css" | "javascript" | "java" | "rust" | "swift" | "bash";
+export type EditorLang = "python" | "html" | "css" | "javascript" | "typescript" | "java" | "rust" | "swift" | "bash";
 
 interface EditorProps {
   value: string;
@@ -33,6 +33,8 @@ const langExtension = (l: EditorLang) => {
       return cssLang();
     case "javascript":
       return javascript();
+    case "typescript":
+      return javascript({ typescript: true });
     case "java":
       return java();
     case "rust":

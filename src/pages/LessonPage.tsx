@@ -8,6 +8,7 @@ import { pythonRunner } from "../runtime/pyodideRunner";
 import { runRemote } from "../runtime/remoteRunner";
 import { evalSourceRules, type RuleResult } from "../runtime/checker";
 import { combinedSource, isDomRule } from "../runtime/webBundle";
+import { transpileTS } from "../runtime/transpileTS";
 import { trackConfig } from "../runtime/tracks";
 import { XP_PER_LESSON, xpFromCompleted, levelInfo, levelTitle } from "../game/xp";
 import { buildBadgeContext, earnedBadgeIds, badgeById } from "../game/badges";
@@ -45,6 +46,8 @@ function LessonInner({ flId }: { flId: string }) {
   const isPython = cfg?.exec === "python";
   const isRemote = cfg?.exec === "wandbox" || cfg?.exec === "godbolt";
   const isNode = cfg?.exec === "iframe"; // single-file JS run in the sandbox iframe
+  const isTS = cfg?.exec === "typescript"; // TS transpiled to JS, run in the iframe
+  const isIframe = isNode || isTS; // both execute in the sandboxed preview iframe
   const isGuided = cfg?.runnable === false; // code-checked, no live execution
   const codeLang = (cfg?.lang ?? "python") as EditorLang;
   const codeFileName = cfg?.fileName ?? "main";
@@ -222,8 +225,15 @@ function LessonInner({ flId }: { flId: string }) {
     [lesson.checks, web, isWeb, pyCode, finalize],
   );
 
-  // Node (single-file JS) and Web both execute in the sandboxed iframe.
-  const iframeFiles: WebFiles = isWeb ? web : { html: "", css: "", js: pyCode };
+  // Node (single-file JS), TypeScript (transpiled to JS), and Web all execute in
+  // the sandboxed iframe. TS is type-erased to JS here; a transpile error is
+  // surfaced as a console error instead of silently running nothing.
+  const iframeJs = useMemo(() => {
+    if (!isTS) return pyCode;
+    const { js, error } = transpileTS(pyCode);
+    return error ? `console.error(${JSON.stringify("TypeScript error: " + error)});` : js;
+  }, [isTS, pyCode]);
+  const iframeFiles: WebFiles = isWeb ? web : { html: "", css: "", js: iframeJs };
 
   const runNode = useCallback(() => {
     setRunning(true);
@@ -258,7 +268,7 @@ function LessonInner({ flId }: { flId: string }) {
     setRunNonce((n) => n + 1);
   }, []);
 
-  const run = isWeb ? runWeb : isNode ? runNode : isGuided ? runGuided : runCode;
+  const run = isWeb ? runWeb : isIframe ? runNode : isGuided ? runGuided : runCode;
 
   // Keyboard: Cmd/Ctrl+Enter to run.
   useEffect(() => {
@@ -446,9 +456,9 @@ function LessonInner({ flId }: { flId: string }) {
             </div>
 
             <div className="results__body">
-              {(isWeb || isNode) && (
-                // For Node this iframe is the (hidden) JS engine; for Web it's the
-                // visible preview when the Preview tab is active.
+              {(isWeb || isIframe) && (
+                // For Node/TypeScript this iframe is the (hidden) JS engine; for
+                // Web it's the visible preview when the Preview tab is active.
                 <div style={{ display: isWeb && resultTab === "preview" ? "block" : "none", height: "100%" }}>
                   <Preview
                     files={iframeFiles}
@@ -465,6 +475,7 @@ function LessonInner({ flId }: { flId: string }) {
                   running={running}
                   emptyHint={
                     isPython ? "Press Run to execute your Python."
+                    : isTS ? "Press Run — your TypeScript is type-erased to JS and console.log output shows here."
                     : isNode ? "Press Run — your JavaScript runs and console.log output shows here."
                     : isGuided ? "Press Check — we verify the code you wrote."
                     : isRemote ? `Press Run to compile & run on the hosted ${course.title} runner.`

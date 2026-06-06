@@ -10,6 +10,7 @@
 export type Track =
   | "python"
   | "web"
+  | "typescript"
   | "swift"
   | "java"
   | "rust"
