@@ -44,7 +44,7 @@ export const ch08: Chapter = {
         'let double = { (n: Int) -> Int in\n    return n * 2\n}\n\nprint("Double: \\(double(21))")\n',
       checks: [
         { label: "Open a closure with a brace", kind: "codeContains", value: "{" },
-        { label: "Use the in keyword to start the body", kind: "codeContains", value: "in " },
+        { label: "Use the in keyword to start the body", kind: "codeContains", value: " in" },
         { label: "Call the stored closure", kind: "codeContains", value: "double(21)" },
         { label: "Print the doubled result", kind: "stdoutContains", value: "Double: 42" },
       ],
@@ -93,7 +93,7 @@ export const ch08: Chapter = {
         'func applyTo(_ x: Int, _ op: (Int) -> Int) -> Int {\n    return op(x)\n}\n\nlet squared = applyTo(5) { n in n * n }\nprint("Squared: \\(squared)")\n',
       checks: [
         { label: "Run the passed-in closure", kind: "codeContains", value: "op(x)" },
-        { label: "Use the in keyword in the closure", kind: "codeContains", value: "in " },
+        { label: "Use the in keyword in the closure", kind: "codeContains", value: " in" },
         { label: "Pass a closure as an argument", kind: "codeContains", value: "{" },
         { label: "Print the squared result", kind: "stdoutContains", value: "Squared: 25" },
       ],

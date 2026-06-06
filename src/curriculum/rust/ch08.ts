@@ -177,7 +177,7 @@ export const ch08: Chapter = {
           type: "code",
           lang: "rust",
           text:
-            'fn main() {\n    let nums = vec![3, 8, 1, 9, 4];\n    let big = nums.iter().filter(|&&n| n > 4).count();\n    let top = nums.iter().max().unwrap();\n    println!("big: {}, top: {}", big, top);\n}',
+            'fn main() {\n    let nums = vec![3, 8, 1, 9, 4, 6];\n    let big = nums.iter().filter(|&&n| n > 4).count();\n    let top = nums.iter().max().unwrap();\n    println!("big: {}, top: {}", big, top);\n}',
         },
         {
           type: "callout",
@@ -186,12 +186,12 @@ export const ch08: Chapter = {
         },
         {
           type: "p",
-          text: 'Start with vec![3, 8, 1, 9, 4]. Use .iter().filter(|&&n| n > 4).count() to count items over 4, and .iter().max().unwrap() for the biggest. Print over: <count> and biggest: <max>. The output should contain over: 3 and biggest: 9.',
+          text: 'Start with vec![3, 8, 1, 9, 4, 6]. Use .iter().filter(|&&n| n > 4).count() to count items over 4, and .iter().max().unwrap() for the biggest. Print over: <count> and biggest: <max>. The output should contain over: 3 and biggest: 9.',
         },
       ],
       starter: "fn main() {\n    // Your code here\n}\n",
       solution:
-        'fn main() {\n    let nums = vec![3, 8, 1, 9, 4];\n    let over = nums.iter().filter(|&&n| n > 4).count();\n    let biggest = nums.iter().max().unwrap();\n    println!("over: {}", over);\n    println!("biggest: {}", biggest);\n}\n',
+        'fn main() {\n    let nums = vec![3, 8, 1, 9, 4, 6];\n    let over = nums.iter().filter(|&&n| n > 4).count();\n    let biggest = nums.iter().max().unwrap();\n    println!("over: {}", over);\n    println!("biggest: {}", biggest);\n}\n',
       checks: [
         { label: "Make a Vec with vec!", kind: "codeContains", value: "vec!" },
         { label: "Walk the items with .iter()", kind: "codeContains", value: ".iter()" },
@@ -202,7 +202,7 @@ export const ch08: Chapter = {
       hints: [
         "Count survivors with nums.iter().filter(|&&n| n > 4).count(); — the double && unwraps the reference.",
         "Find the biggest with nums.iter().max().unwrap(); since .max() returns an Option.",
-        'Full answer: fn main() {\n    let nums = vec![3, 8, 1, 9, 4];\n    let over = nums.iter().filter(|&&n| n > 4).count();\n    let biggest = nums.iter().max().unwrap();\n    println!("over: {}", over);\n    println!("biggest: {}", biggest);\n}',
+        'Full answer: fn main() {\n    let nums = vec![3, 8, 1, 9, 4, 6];\n    let over = nums.iter().filter(|&&n| n > 4).count();\n    let biggest = nums.iter().max().unwrap();\n    println!("over: {}", over);\n    println!("biggest: {}", biggest);\n}',
       ],
       wellDone: "You bounced the small ones and crowned the biggest. Iterators do your counting now.",
     },
