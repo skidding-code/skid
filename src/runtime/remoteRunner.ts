@@ -101,6 +101,48 @@ export interface RemoteRunResult {
   serviceError?: boolean;
 }
 
+// Prefer running compilers through our own backend (/api/run) when present:
+// the server has a stable network and no CORS, which avoids flaky client-side
+// fetches to wandbox/godbolt. Falls back to direct fetch on a static host.
+const API_BASE =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) || "";
+let proxyMode: boolean | null = null; // null=unknown, true=use backend, false=direct
+
+async function tryProxy(
+  track: Track,
+  code: string,
+  timeoutMs: number,
+): Promise<RemoteRunResult | "no-proxy"> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs + 4000);
+  try {
+    const res = await fetch(`${API_BASE}/api/run`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ track, code }),
+      signal: ctrl.signal,
+    });
+    if (res.status === 404) return "no-proxy";
+    // A static host answers unknown routes with the SPA's index.html — detect
+    // that (not JSON) and fall back to direct.
+    if (!(res.headers.get("content-type") || "").includes("application/json")) return "no-proxy";
+    if (!res.ok) {
+      return { ok: false, stdout: "", stderr: `run ${res.status}`, error: "The runner had a problem — try again.", serviceError: true };
+    }
+    return (await res.json()) as RemoteRunResult;
+  } catch (err) {
+    // Network error to our own origin. If we know a backend is there, report it;
+    // otherwise fall back to direct.
+    if (proxyMode === true) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return { ok: false, stdout: "", stderr: msg, error: "Couldn't reach the runner. Try again.", serviceError: true };
+    }
+    return "no-proxy";
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 let compilerCache: Record<string, string> | null = null;
 let compilerCachePromise: Promise<Record<string, string>> | null = null;
 
@@ -155,7 +197,17 @@ async function compileOnce(compiler: string, code: string, timeoutMs: number): P
  * compile/runtime errors — those come back in the result. Throws only never;
  * network problems are reported as `serviceError`. */
 export async function runRemote(track: Track, code: string, timeoutMs = 35_000): Promise<RemoteRunResult> {
-  // Swift runs on Compiler Explorer (Wandbox's Swift container is unreliable).
+  // 1) Prefer the backend proxy when available (reliable, no client CORS).
+  if (proxyMode !== false) {
+    const proxied = await tryProxy(track, code, timeoutMs);
+    if (proxied !== "no-proxy") {
+      proxyMode = true;
+      return proxied;
+    }
+    proxyMode = false; // no backend here — use direct from now on
+  }
+
+  // 2) Direct fallback (static hosting). Swift → Compiler Explorer; rest → Wandbox.
   if (track === "swift") return runSwiftGodbolt(code, timeoutMs);
 
   const lang = WANDBOX_LANG[track];

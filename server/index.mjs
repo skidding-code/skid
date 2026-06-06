@@ -13,6 +13,7 @@ import jwt from "jsonwebtoken";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { existsSync } from "node:fs";
+import { runRemote } from "./runner.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 8787);
@@ -128,6 +129,21 @@ app.put("/api/progress", auth, (req, res) => {
 
 app.get("/api/leaderboard", (_req, res) => {
   res.json({ entries: q.leaderboard.all() });
+});
+
+// Compile + run Swift/Java/Rust/Bash server-side, so the browser never has to
+// reach a third-party compiler directly (fixes flaky client-side fetches).
+const RUNNABLE = new Set(["swift", "java", "rust", "bash"]);
+app.post("/api/run", async (req, res) => {
+  const { track, code } = req.body || {};
+  if (!RUNNABLE.has(track)) return res.status(400).json({ error: `Can't run "${track}" here.` });
+  if (typeof code !== "string" || code.length > 100_000)
+    return res.status(400).json({ error: "Missing or oversized code." });
+  try {
+    res.json(await runRemote(track, code));
+  } catch (e) {
+    res.json({ ok: false, stdout: "", stderr: String(e), error: "Runner failed.", serviceError: true });
+  }
 });
 
 // ── static app (SPA) ──────────────────────────────────────────────────────────
